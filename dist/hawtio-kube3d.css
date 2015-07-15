@@ -1,0 +1,15 @@
+.kube3d-viewport {
+  position:fixed !important;
+  position:absolute;
+  top:70px;
+  right:0;
+  bottom:0;
+  left:0;
+  background-color: green;
+}
+
+.kube3d-control {
+  width: 100%;
+  height: 100%;
+  background-color: blue;
+}

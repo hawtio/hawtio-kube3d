@@ -1,0 +1,36 @@
+{
+  "name": "hawtio-kube3d",
+  "version": "2.0.0",
+  "keywords": [
+    "hawtio"
+  ],
+  "main": [
+    "dist/hawtio-kube3d.js",
+    "dist/hawtio-kube3d.css"
+  ],
+  "ignore": [
+    "dist/hawtio-kube3d-test.js",
+    "**/.*",
+    "node_modules",
+    "libs",
+    "plugins"
+  ],
+  "dependencies": {
+    "hawtio-core": "~2.0.0",
+    "hawtio-core-navigation": "~2.0.0",
+    "hawtio-utilities": "~2.0.0",
+    "hawtio-kubernetes": "~2.1.17",
+    "three.js": "~0.71.0",
+    "hawtio-extension-service": "~2.0.2",
+    "hawtio-preferences": "~2.0.4"
+  },
+  "devDependencies": {
+    "bootstrap": "~3.3.1",
+    "patternfly": "~1.1.2",
+    "hawtio-core-dts": "~2.0.0"
+  },
+  "resolutions": {
+    "lodash": "~3.2.0",
+    "codemirror": "~4.11.0"
+  }
+}
