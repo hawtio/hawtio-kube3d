@@ -1,22 +1,13 @@
 /// <reference path="../../includes.ts"/>
 module Kube3d {
 
-  export interface Point3d {
-    x:number;
-    y:number;
-    z:number;
-  }
-
-  export interface Size3d {
-    width: number;
-    height: number;
-    depth: number;
-  }
-
-  export interface SceneObject {
+  export interface Renderable {
     render():void;
     destroy():void;
-    getPosition():Point3d;
+  }
+
+  export interface SceneObject extends Renderable{
+    getPosition():any;
     setPosition(x, y, z);
     setRotation(rx, ry, rz);
   };
