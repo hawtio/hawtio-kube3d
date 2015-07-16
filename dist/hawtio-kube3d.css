@@ -5,13 +5,11 @@
   right:0;
   bottom:0;
   left:0;
-  background-color: green;
 }
 
 .kube3d-control {
   width: 100%;
   height: 100%;
-  background-color: blue;
 }
 
 .kube3d-instructions {
@@ -20,7 +18,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: grey;
+  background: inherit;
   opacity: 0.5;
 } 
 
@@ -37,4 +35,5 @@
   border-radius: 15px;
   background-color: white;
   font-size: 32px;
+  cursor: pointer;
 }

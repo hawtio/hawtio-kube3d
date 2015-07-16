@@ -43,7 +43,7 @@ module Kube3d {
 
       self.handlers = {
         'keydown': (event:any) => {
-          switch ( event.originalEvent.keyCode ) {
+          switch ( event.keyCode ) {
             case 38: // up
             case 87: // w
               self.forward = true;
@@ -69,7 +69,7 @@ module Kube3d {
           }
         },
         'keyup': (event:any) => {
-          switch ( event.originalEvent.keyCode ) {
+          switch ( event.keyCode ) {
             case 38: // up
             case 87: // w
               self.forward = false;
