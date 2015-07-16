@@ -13,3 +13,28 @@
   height: 100%;
   background-color: blue;
 }
+
+.kube3d-instructions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: grey;
+  opacity: 0.5;
+} 
+
+.kube3d-instructions-wrapper {
+  opacity: 1.0;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+}
+
+.kube3d-start-title {
+  padding: 15px;
+  border-radius: 15px;
+  background-color: white;
+  font-size: 32px;
+}

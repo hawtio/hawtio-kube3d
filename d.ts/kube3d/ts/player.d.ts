@@ -20,7 +20,7 @@ declare module Kube3d {
         private prevTime;
         private handlers;
         constructor(scene: any, camera: any, d: any);
-        enable(enabled: any): void;
+        enabled: boolean;
         lookAt(box: any): void;
         destroy(): void;
         render(): void;

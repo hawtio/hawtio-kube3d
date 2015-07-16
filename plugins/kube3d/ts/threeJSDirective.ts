@@ -4,18 +4,6 @@ module Kube3d {
 
   var directiveName = 'threejs';
 
-  function webglAvailable() {
-    try {
-      var canvas = document.createElement( 'canvas' );
-      return !!( (<any>window).WebGLRenderingContext && (
-            canvas.getContext( 'webgl' ) ||
-            canvas.getContext( 'experimental-webgl' ) )
-          );
-    } catch ( e ) {
-      return false;
-    }
-  }
-
   _module.directive(directiveName, [() => {
     THREE.ImageUtils.crossOrigin = '';
     return {

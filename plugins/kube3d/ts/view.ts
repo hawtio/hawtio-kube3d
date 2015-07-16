@@ -5,13 +5,14 @@
 
 module Kube3d {
 
-  export var ViewController = controller('ViewController', ['$scope', 'KubernetesModel', 'KubernetesState', ($scope, model:Kubernetes.KubernetesModelService, state) => {
+  export var ViewController = controller('ViewController', ['$scope', 'KubernetesModel', 'KubernetesState', '$element', ($scope, model:Kubernetes.KubernetesModelService, state, $element) => {
 
     var debugScene = false;
 
     var renderer:any = undefined;
     var scene:any = undefined;
     var camera:any = undefined;
+    var domElement:any = undefined;
 
     var sceneGeometry = new THREE.Object3D();
     var sceneBounds = new THREE.BoundingBoxHelper(sceneGeometry, 0xff0000);
@@ -24,14 +25,22 @@ module Kube3d {
     var player:Player = null;
     var world:World = null;
 
+    $scope.onLock = (lock) => {
+      if (!player) {
+        return;
+      }
+      player.enabled = lock;
+    }
+
     $scope.config = {
       initialize: (r, s, c, d) => {
         log.debug("init called");
         renderer = r;
         scene = s;
         camera = c;
+        domElement = d;
 
-        player = new Player(scene, camera, d);
+        $scope.player = player = new Player(scene, camera, d);
         world = new World(scene);
 
         scene.add(sceneGeometry);
@@ -55,11 +64,11 @@ module Kube3d {
         buildScene();
       },
       render: (renderer, scene, camera) => {
-        world.render();
         // NOTE - this function runs at ~ 60fps!
         if (updating) {
           return;
         }
+        world.render();
         var angle = Date.now() * 0.0001;
         sceneGeometry.position.x = 1000 * Math.cos(angle);
         sceneGeometry.position.z = 1000 * Math.sin(angle);

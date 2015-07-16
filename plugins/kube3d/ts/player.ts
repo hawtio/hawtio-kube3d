@@ -26,7 +26,7 @@ module Kube3d {
     private handlers:any = null;
 
     public constructor(private scene, private camera, private d) {
-      var camera = this.camera;
+
       camera.rotation.set(0, 0, 0);
       camera.position.set(0, 0, 0);
       this.pitch.add(camera);
@@ -34,31 +34,36 @@ module Kube3d {
       scene.add(this.yaw);
 
       var domElement = this.domElement = $(d);
-      var document = this._document = $(document);
 
-      this.handlers = {
+      if (!havePointerLock) {
+        this.enabled = true;
+      }
+
+      var self = this;
+
+      self.handlers = {
         'keydown': (event:any) => {
           switch ( event.originalEvent.keyCode ) {
             case 38: // up
             case 87: // w
-              this.forward = true;
+              self.forward = true;
               break;
             case 37: // left
             case 65: // a
-              this.left = true; 
+              self.left = true; 
               break;
             case 40: // down
             case 83: // s
-              this.backward = true;
+              self.backward = true;
               break;
             case 39: // right
             case 68: // d
-              this.right = true;
+              self.right = true;
               break;
             case 32: // space
-              if (this.canJump === true) {
-                this.velocity.y += 350;
-                this.canJump = false;
+              if (self.canJump === true) {
+                self.velocity.y += 350;
+                self.canJump = false;
               }
               break;
           }
@@ -67,41 +72,44 @@ module Kube3d {
           switch ( event.originalEvent.keyCode ) {
             case 38: // up
             case 87: // w
-              this.forward = false;
+              self.forward = false;
               break;
             case 37: // left
             case 65: // a
-              this.left = false; 
+              self.left = false; 
               break;
             case 40: // down
             case 83: // s
-              this.backward = false;
+              self.backward = false;
               break;
             case 39: // right
             case 68: // d
-              this.right = false;
+              self.right = false;
               break;
           }
         },
         'mousemove': (event:any) => {
-          if (!this._enabled) {
+          if (!self._enabled || !havePointerLock) {
             return;
           }
-          var evt = event.originalEvent;
-          var yaw = this.yaw;
-          var pitch = this.pitch;
-          var deltaX = evt.movementX || evt.mozMovementX || evt.webkitMovementX || 0;
-          var deltaY = evt.movementY || evt.mozMovementX || evt.webkitMovementX || 0;
+          var yaw = self.yaw;
+          var pitch = self.pitch;
+          var deltaX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+          var deltaY = event.movementY || event.mozMovementX || event.webkitMovementX || 0;
           yaw.rotation.y -= deltaX * 0.002;
           pitch.rotation.x -= deltaY * 0.002;
           pitch.rotation.x = Math.max( - HalfPI, Math.min(HalfPI, pitch.rotation.x));
         }
       };
-      _.forIn(this.handlers, (handler, evt) => document[evt](handler));
+      _.forIn(this.handlers, (handler, evt) => document.addEventListener(evt, handler, false));
     }
 
-    public enable(enabled) {
+    public set enabled(enabled) {
       this._enabled = enabled;
+    }
+
+    public get enabled() {
+      return this._enabled;
     }
 
     public lookAt(box) {
@@ -112,17 +120,17 @@ module Kube3d {
       this.scene.remove(this.yaw);
       this.yaw.dispose();
       this.pitch.dispose();
-      _.forIn(this.handlers, (handler, evt) => this._document.off(evt, handler));
+      _.forIn(this.handlers, (handler, evt) => document.removeEventListener(evt, handler));
     }
 
     public render() {
-      if (this.lookAt) {
-        var angle = Date.now() * 0.0001;
-        this.camera.focus(this._lookAt, angle);
+      if (!this.enabled || !havePointerLock) {
+        if (this.lookAt) {
+          var angle = Date.now() * 0.0001;
+          this.camera.focus(this._lookAt, angle);
+        }
+        return;
       }
-
     }
-
   }
-
 }
