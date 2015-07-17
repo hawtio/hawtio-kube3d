@@ -51,12 +51,14 @@ module Kube3d {
             log.debug("no config, returning");
             return;
           }
+          // emergency vet
+          // 603-227-1199
           log.debug("creating scene");
           scene = new THREE.Scene();
           camera = new THREE.PerspectiveCamera(60, element.width() / element.height(), 0.1, 20000);
 
-          camera.focus = (box3:any, angle) => {
-            // adjust the camera position to keep everything in view, we'll do
+          camera.focus = (box3:any, angle, c:any = camera) => {
+            // adjust the c position to keep everything in view, we'll do
             // gradual adjustments though
             var height = box3.size().y;
             var width = box3.size().x / (camera.aspect / 2);
@@ -68,21 +70,21 @@ module Kube3d {
             var distX = Math.round(width * Math.tan( (camera.fov / 2 ) * ( Math.PI / 180 )));
             var distZ = (distY + distX);
             // log.debug("distY:", distY, " distX:", distX, "distZ:", distZ);
-            var z = Math.round(camera.position.z);
+            var z = Math.round(c.position.z);
             var period = 5.0;
-            camera.position.x = distX * Math.cos(angle);
-            camera.position.y = distY * Math.sin(angle);
+            c.position.x = distX * Math.cos(angle);
+            c.position.y = distY * Math.sin(angle);
             if (z !== distZ) {
               if (z > distZ) {
                 var v = (z - distZ) / period;
-                camera.position.z = z - v;
+                c.position.z = z - v;
               }
               if (z < distZ) {
                 var v = (distZ - z) / period;
-                camera.position.z = z + v;
+                c.position.z = z + v;
               }
             }
-            camera.lookAt(box3.center());
+            c.lookAt(box3.center());
           };
 
           if ( webglAvailable() ) {
@@ -90,7 +92,8 @@ module Kube3d {
           } else {
             renderer = new THREE.CanvasRenderer();
           }
-          renderer.setPixelRatio( window.devicePixelRatio );
+          //renderer.setClearColor(0xffffff);
+          renderer.setPixelRatio(window.devicePixelRatio);
           renderer.setSize(element.width(), element.height());
           var domElement = renderer.domElement;
           element.append(domElement);

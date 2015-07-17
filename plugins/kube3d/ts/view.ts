@@ -50,11 +50,11 @@ module Kube3d {
           // puts a bounding box around the scene we want to view
           scene.add(sceneBounds);
 
-          // adds lines for the x/y/z axis
-          // The X axis is red. The Y axis is green. The Z axis is blue
-          var axis = new THREE.AxisHelper(1000);
-          scene.add(axis);
         }
+        // adds lines for the x/y/z axis
+        // The X axis is red. The Y axis is green. The Z axis is blue
+        var axis = new THREE.AxisHelper(1000);
+        scene.add(axis);
 
         sceneGeometry.rotation.x = 90;
         sceneGeometry.rotation.z = 90;

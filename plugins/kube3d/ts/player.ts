@@ -12,6 +12,10 @@ module Kube3d {
     private _enabled = false;
     private _document = undefined;
 
+    private getWorldObjects:any = () => [];
+
+    private raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
+
     // movement booleans
     private forward = false;
     private backward = false;
@@ -23,6 +27,7 @@ module Kube3d {
     private velocity = new THREE.Vector3();
     private prevTime = performance.now();
 
+    // key/mouse handlers
     private handlers:any = null;
 
     public constructor(private scene, private camera, private d) {
@@ -32,6 +37,8 @@ module Kube3d {
       this.pitch.add(camera);
       this.yaw.add(this.pitch);
       scene.add(this.yaw);
+
+      this.yaw.position.set(0, 0, -5);
 
       var domElement = this.domElement = $(d);
 
@@ -98,7 +105,7 @@ module Kube3d {
           var deltaY = event.movementY || event.mozMovementX || event.webkitMovementX || 0;
           yaw.rotation.y -= deltaX * 0.002;
           pitch.rotation.x -= deltaY * 0.002;
-          pitch.rotation.x = Math.max( - HalfPI, Math.min(HalfPI, pitch.rotation.x));
+          pitch.rotation.x = Math.max(-HalfPI, Math.min(HalfPI, pitch.rotation.x));
         }
       };
       _.forIn(this.handlers, (handler, evt) => document.addEventListener(evt, handler, false));
@@ -106,10 +113,28 @@ module Kube3d {
 
     public set enabled(enabled) {
       this._enabled = enabled;
+      if (enabled) {
+        this.camera.position.set(0, 0, 0);
+        this.camera.rotation.set(0, 0, 0);
+        this.yaw.position.set(0, 0, -5);
+      } else {
+        this.yaw.position.set(0, 0, 0);
+        this.yaw.rotation.set(0, 0, 0);
+        this.pitch.rotation.set(0, 0, 0);
+      }
+
+    }
+
+    public setWorldObjectsCallback(func) {
+      this.getWorldObjects = func;
     }
 
     public get enabled() {
       return this._enabled;
+    }
+
+    public get object() {
+      return this.yaw;
     }
 
     public lookAt(box) {
@@ -125,12 +150,56 @@ module Kube3d {
 
     public render() {
       if (!this.enabled || !havePointerLock) {
-        if (this.lookAt) {
+        if (this._lookAt) {
           var angle = Date.now() * 0.0001;
           this.camera.focus(this._lookAt, angle);
         }
         return;
       }
+
+      var raycaster = this.raycaster;
+      var velocity = this.velocity;
+      var me = this.object;
+
+      raycaster.ray.origin.copy( this.yaw.position );
+      raycaster.ray.origin.y -= 10;
+
+      var objects = this.getWorldObjects();
+
+      var intersections = raycaster.intersectObjects(objects);
+
+      var isOnObject = intersections.length > 0;
+
+      var time = performance.now();
+      var delta = ( time - this.prevTime ) / 1000;
+
+      velocity.x -= velocity.x * 10.0 * delta;
+      velocity.z -= velocity.z * 10.0 * delta;
+
+      velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+
+      if (this.forward) velocity.z -= 400.0 * delta;
+      if (this.backward) velocity.z += 400.0 * delta;
+      if (this.left) velocity.x -= 400.0 * delta;
+      if (this.right) velocity.x += 400.0 * delta;
+
+      if ( isOnObject === true ) {
+        velocity.y = Math.max( 0, velocity.y );
+        this.canJump = true;
+      }
+
+      me.translateX( velocity.x * delta );
+      me.translateY( velocity.y * delta );
+      me.translateZ( velocity.z * delta );
+
+      if ( me.position.y < 10 ) {
+
+        velocity.y = 0;
+        me.position.y = 10;
+        this.canJump = true;
+      }
+
+      this.prevTime = time;
     }
   }
 }

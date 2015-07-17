@@ -11,6 +11,8 @@ declare module Kube3d {
         private yaw;
         private _enabled;
         private _document;
+        private getWorldObjects;
+        private raycaster;
         private forward;
         private backward;
         private left;
@@ -21,6 +23,8 @@ declare module Kube3d {
         private handlers;
         constructor(scene: any, camera: any, d: any);
         enabled: boolean;
+        setWorldObjectsCallback(func: any): void;
+        object: any;
         lookAt(box: any): void;
         destroy(): void;
         render(): void;
