@@ -1,4 +1,5 @@
 /// <reference path="kube3dHelpers.ts"/>
+/// <reference path="world.ts"/>
 
 module Kube3d {
 
@@ -30,7 +31,7 @@ module Kube3d {
     // key/mouse handlers
     private handlers:any = null;
 
-    public constructor(private scene, private camera, private d) {
+    public constructor(private scene, private camera, private d, private world:World) {
 
       camera.rotation.set(0, 0, 0);
       camera.position.set(0, 0, 0);
@@ -116,7 +117,8 @@ module Kube3d {
       if (enabled) {
         this.camera.position.set(0, 0, 0);
         this.camera.rotation.set(0, 0, 0);
-        this.yaw.position.set(0, 0, -5);
+        this.object.position.set(0, 0, 0);
+        this.world.placePlayer(this.object);
       } else {
         this.yaw.position.set(0, 0, 0);
         this.yaw.rotation.set(0, 0, 0);

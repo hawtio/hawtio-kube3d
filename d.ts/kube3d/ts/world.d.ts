@@ -5,6 +5,8 @@ declare module Kube3d {
         private ambient;
         private light;
         constructor(scene: any);
+        placePlayer(object: any): void;
+        placeObject(object: any): void;
         render(): void;
         destroy(): void;
     }

@@ -40,8 +40,8 @@ module Kube3d {
         camera = c;
         domElement = d;
 
-        $scope.player = player = new Player(scene, camera, d);
         world = new World(scene);
+        player = new Player(scene, camera, d, world);
 
         scene.add(sceneGeometry);
 

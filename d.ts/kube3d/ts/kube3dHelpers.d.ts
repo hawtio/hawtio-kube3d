@@ -9,4 +9,5 @@ declare module Kube3d {
     function rgbToHex(r: any, g: any, b: any): string;
     function randomGrey(): string;
     function webglAvailable(): boolean;
+    function placeObject(cellX: any, cellY: any, isFloor?: boolean): number[];
 }

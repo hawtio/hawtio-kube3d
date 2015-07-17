@@ -31,6 +31,13 @@ module Kube3d {
     }
   }
 
+  export function placeObject(cellX, cellY, isFloor = false) {
+    var x = cellX * CELL_SIZE;
+    var z = cellY * CELL_SIZE;
+    var y = isFloor ? FLOOR_LEVEL : 0;
+    return [x, y, z];
+  }
+
 
 
 }
