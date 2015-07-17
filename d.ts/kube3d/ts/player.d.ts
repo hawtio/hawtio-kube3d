@@ -20,6 +20,7 @@ declare module Kube3d {
         private left;
         private right;
         private canJump;
+        private running;
         private velocity;
         private prevTime;
         private handlers;
@@ -29,6 +30,8 @@ declare module Kube3d {
         object: any;
         lookAt(box: any): void;
         destroy(): void;
+        private walkingModifier;
+        private runningModifier;
         render(): void;
     }
 }

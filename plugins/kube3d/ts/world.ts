@@ -22,6 +22,8 @@ module Kube3d {
   var wallMaterial = new THREE.MeshPhongMaterial({
     color: 0x00ff00, 
     map: wallTexture,
+    castShadow: true,
+    receiveShadow: true,
     wireframe: false
   });
   var wall = new THREE.Mesh(new THREE.BoxGeometry(CELL_SIZE, CELL_SIZE, CELL_SIZE), wallMaterial);
@@ -31,6 +33,8 @@ module Kube3d {
   var floorMaterial = new THREE.MeshPhongMaterial({
     color: 0xff0000, 
     map: floorTexture,
+    castShadow: true,
+    receiveShadow: true,
     wireframe: false
   });
   var floor = new THREE.Mesh(new THREE.BoxGeometry(CELL_SIZE, CELL_SIZE, CELL_SIZE), floorMaterial);

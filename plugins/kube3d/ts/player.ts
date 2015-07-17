@@ -23,6 +23,7 @@ module Kube3d {
     private left = false;
     private right = false;
     private canJump = true;
+    private running = false;
 
     // movement velocity
     private velocity = new THREE.Vector3();
@@ -68,6 +69,9 @@ module Kube3d {
             case 68: // d
               self.right = true;
               break;
+            case 16: // shift
+              self.running = true;
+              break;
             case 32: // space
               if (self.canJump === true) {
                 self.velocity.y += 350;
@@ -94,6 +98,9 @@ module Kube3d {
             case 68: // d
               self.right = false;
               break;
+            case 16: // shift
+              self.running = false;
+              break;
           }
         },
         'mousemove': (event:any) => {
@@ -118,6 +125,8 @@ module Kube3d {
         this.camera.position.set(0, 0, 0);
         this.camera.rotation.set(0, 0, 0);
         this.object.position.set(0, 0, 0);
+        var angle = THREE.Math.degToRad(THREE.Math.random16() * 360);
+        this.yaw.rotation.set(0, angle, 0);
         this.world.placePlayer(this.object);
       } else {
         this.yaw.position.set(0, 0, 0);
@@ -150,6 +159,9 @@ module Kube3d {
       _.forIn(this.handlers, (handler, evt) => document.removeEventListener(evt, handler));
     }
 
+    private walkingModifier = 500;
+    private runningModifier = 200;
+
     public render() {
       if (!this.enabled || !havePointerLock) {
         if (this._lookAt) {
@@ -173,7 +185,8 @@ module Kube3d {
       var isOnObject = intersections.length > 0;
 
       var time = performance.now();
-      var delta = ( time - this.prevTime ) / 1000;
+      var modifier = this.running ? this.runningModifier : this.walkingModifier;
+      var delta = (time - this.prevTime) / modifier;
 
       velocity.x -= velocity.x * 10.0 * delta;
       velocity.z -= velocity.z * 10.0 * delta;

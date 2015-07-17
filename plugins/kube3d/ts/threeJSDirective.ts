@@ -45,14 +45,12 @@ module Kube3d {
           log.debug("scene destroyed");
         });
 
-        scope.$watch('config', (config) => {
+        scope.$watch('config', _.debounce((config) => {
           stop();
           if (!config || !config.initialize) {
             log.debug("no config, returning");
             return;
           }
-          // emergency vet
-          // 603-227-1199
           log.debug("creating scene");
           scene = new THREE.Scene();
           camera = new THREE.PerspectiveCamera(60, element.width() / element.height(), 0.1, 20000);
@@ -96,10 +94,10 @@ module Kube3d {
           renderer.setPixelRatio(window.devicePixelRatio);
           renderer.setSize(element.width(), element.height());
           var domElement = renderer.domElement;
-          element.append(domElement);
-
-          $(window).on('resize', resizeFunc);
           config.initialize(renderer, scene, camera, domElement);
+
+          element.append(domElement);
+          $(window).on('resize', resizeFunc);
 
           var render = () => {
             if (!keepRendering) {
@@ -114,8 +112,7 @@ module Kube3d {
           }
           keepRendering = true;
           render();
-
-        });
+        }, 500, { trailing: true }));
       }
     };
   }]);
