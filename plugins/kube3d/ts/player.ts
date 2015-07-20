@@ -170,28 +170,23 @@ module Kube3d {
         }
         return;
       }
-
       var raycaster = this.raycaster;
       var velocity = this.velocity;
       var me = this.object;
-
       raycaster.ray.origin.copy( this.yaw.position );
       raycaster.ray.origin.y -= 10;
-
       var objects = this.getWorldObjects();
-
       var intersections = raycaster.intersectObjects(objects);
-
       var isOnObject = intersections.length > 0;
-
       var time = performance.now();
+      var interval = time - this.prevTime;
       var modifier = this.running ? this.runningModifier : this.walkingModifier;
-      var delta = (time - this.prevTime) / modifier;
+      var delta = interval / modifier;
+      var deltaY = interval / this.walkingModifier;
 
       velocity.x -= velocity.x * 10.0 * delta;
       velocity.z -= velocity.z * 10.0 * delta;
-
-      velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+      velocity.y -= 9.8 * 100.0 * deltaY; // 100.0 = mass
 
       if (this.forward) velocity.z -= 400.0 * delta;
       if (this.backward) velocity.z += 400.0 * delta;
@@ -203,9 +198,9 @@ module Kube3d {
         this.canJump = true;
       }
 
-      me.translateX( velocity.x * delta );
-      me.translateY( velocity.y * delta );
-      me.translateZ( velocity.z * delta );
+      me.translateX(velocity.x * delta);
+      me.translateY(velocity.y * deltaY);
+      me.translateZ(velocity.z * delta);
 
       if ( me.position.y < 10 ) {
 

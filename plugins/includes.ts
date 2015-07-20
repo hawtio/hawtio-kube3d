@@ -16,4 +16,10 @@
 /// <reference path="../libs/hawtio-utilities/defs.d.ts"/>
 /// <reference path="../libs/hawtio-kubernetes/defs.d.ts"/>
 
+declare var Physijs:any;
 declare var THREE:any;
+
+// TODO might need to figure out how to deal with these
+Physijs.scripts.worker = 'dist/physijs_worker.js';
+Physijs.scripts.ammo = 'dist/ammo.js';
+

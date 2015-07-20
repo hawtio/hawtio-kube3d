@@ -5,6 +5,8 @@
     "hawtio"
   ],
   "main": [
+    "dist/three.js",
+    "dist/physi.js",
     "dist/hawtio-kube3d.js",
     "dist/hawtio-kube3d.css"
   ],
@@ -20,7 +22,6 @@
     "hawtio-core-navigation": "~2.0.0",
     "hawtio-utilities": "~2.0.0",
     "hawtio-kubernetes": "~2.1.17",
-    "three.js": "~0.71.0",
     "hawtio-extension-service": "~2.0.2",
     "hawtio-preferences": "~2.0.4"
   },
