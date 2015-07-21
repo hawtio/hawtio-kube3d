@@ -1,6 +1,8 @@
 /// <reference path="../../includes.d.ts" />
 /// <reference path="kube3dInterfaces.d.ts" />
 declare var THREE: any;
+declare var createGame: any;
+declare var terrain: any;
 declare module Kube3d {
     var pluginName: string;
     var log: Logging.Logger;

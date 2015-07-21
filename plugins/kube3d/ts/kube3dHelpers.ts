@@ -2,6 +2,8 @@
 /// <reference path="kube3dInterfaces.ts"/>
 
 var THREE = require('threejs-build');
+var createGame = require('voxel-hello-world');
+var terrain = require('voxel-perlin-terrain');
 
 module Kube3d {
   export var pluginName = 'Kube3d';
