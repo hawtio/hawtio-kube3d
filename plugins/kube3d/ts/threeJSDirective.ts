@@ -53,7 +53,7 @@ module Kube3d {
           }
           log.debug("creating scene");
           //scene = new THREE.Scene();
-          scene = new Physijs.Scene();
+          scene = new THREE.Scene();
           camera = new THREE.PerspectiveCamera(60, element.width() / element.height(), 0.1, 20000);
 
           camera.focus = (box3:any, angle, c:any = camera) => {
@@ -108,7 +108,6 @@ module Kube3d {
             if (config.render) {
               config.render(renderer, scene, camera);
             }
-            scene.simulate();
             renderer.render(scene, camera);
             requestAnimationFrame(render);
           }

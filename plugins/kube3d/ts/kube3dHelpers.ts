@@ -1,6 +1,8 @@
 /// <reference path="../../includes.ts"/>
 /// <reference path="kube3dInterfaces.ts"/>
 
+var THREE = require('threejs-build');
+
 module Kube3d {
   export var pluginName = 'Kube3d';
   export var log:Logging.Logger = Logger.get(pluginName);

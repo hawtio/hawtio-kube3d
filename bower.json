@@ -5,8 +5,6 @@
     "hawtio"
   ],
   "main": [
-    "dist/three.js",
-    "dist/physi.js",
     "dist/hawtio-kube3d.js",
     "dist/hawtio-kube3d.css"
   ],

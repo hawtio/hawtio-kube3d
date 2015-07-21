@@ -12,6 +12,8 @@ var gulp = require('gulp'),
     hawtio = require('hawtio-node-backend'),
     tslint = require('gulp-tslint'),
     stringifyObject = require('stringify-object'),
+    browserify = require('browserify'),
+    source = require('vinyl-source-stream'),
     tslintRules = require('./tslint.json');
 
 var plugins = gulpLoadPlugins({});
@@ -181,15 +183,26 @@ gulp.task('concat', ['template'], function() {
   var gZipSize = size(gZippedSizeOptions);
   var license = tslintRules.rules['license-header'][1];
   return gulp.src(['compiled.js', 'templates.js'])
-    .pipe(plugins.concat(config.js))
+    .pipe(plugins.concat('tmp-' + config.js))
     .pipe(plugins.header(license))
     .pipe(size(normalSizeOptions))
     .pipe(gZipSize)
+    .pipe(gulp.dest('.'));
+});
+
+gulp.task('browserify', ['concat'], function() {
+  var b = browserify({
+    entries: 'tmp-' + config.js,
+    debug: true
+  });
+
+  return b.bundle()
+    .pipe(source(config.js))
     .pipe(gulp.dest(config.dist));
 });
 
-gulp.task('clean', ['concat'], function() {
-  return gulp.src(['templates.js', 'compiled.js'], { read: false })
+gulp.task('clean', ['browserify'], function() {
+  return gulp.src(['tmp-' + config.js, 'templates.js', 'compiled.js'], { read: false })
     .pipe(plugins.clean());
 });
 
@@ -198,7 +211,7 @@ gulp.task('watch', ['build', 'build-example'], function() {
     gulp.start('reload');
   });
   plugins.watch(['libs/**/*.d.ts', config.ts, config.templates], function() {
-    gulp.start(['tsc', 'template', 'concat', 'clean']);
+    gulp.start(['tsc', 'template', 'concat', 'browserify', 'clean']);
   });
   plugins.watch([config.testTs, config.testTemplates], function() {
     gulp.start(['example-tsc', 'example-template', 'example-concat', 'example-clean']);
@@ -303,7 +316,7 @@ gulp.task('reload', function() {
     .pipe(hawtio.reload());
 });
 
-gulp.task('build', ['bower', 'path-adjust', 'tsc', 'template', 'concat', 'clean']);
+gulp.task('build', ['bower', 'path-adjust', 'tsc', 'template', 'concat', 'browserify', 'clean']);
 
 gulp.task('build-example', ['example-tsc', 'example-template', 'example-concat', 'example-clean']);
 
