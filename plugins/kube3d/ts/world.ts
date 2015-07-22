@@ -16,6 +16,7 @@ module Kube3d {
 
   var levelWidth = levelData[0].length;
   var levelHeight = levelData.length;
+  /*
 
   var wallTexture = THREE.ImageUtils.loadTexture('img/IMGP1450.jpg');
   wallTexture.minFilter = THREE.NearestFilter;
@@ -38,11 +39,15 @@ module Kube3d {
     wireframe: false
   });
   var floor = new THREE.Mesh(new THREE.BoxGeometry(CELL_SIZE, CELL_SIZE, CELL_SIZE), floorMaterial);
+  */
 
   function makeBox(cellX, cellY, isFloor = false) {
+    /*
     var box = isFloor ? floor.clone() : wall.clone();
     box.position.fromArray(placeObject(cellX, cellY, isFloor));
     return box;
+    */
+    return undefined;
   }
 
   export class World implements Renderable {

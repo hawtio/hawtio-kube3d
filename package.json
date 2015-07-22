@@ -31,7 +31,14 @@
   },
   "dependencies": {
     "threejs-build": "^71.0.0",
+    "voxel-creature": "^0.1.0",
+    "voxel-engine": "^0.20.2",
+    "voxel-fly": "^0.1.2",
     "voxel-hello-world": "^0.6.0",
-    "voxel-perlin-terrain": "^1.0.0"
+    "voxel-highlight": "0.0.10",
+    "voxel-perlin-terrain": "^1.0.0",
+    "voxel-player": "^0.1.0",
+    "voxel-sky": "^0.3.0",
+    "voxel-walk": "0.0.5"
   }
 }

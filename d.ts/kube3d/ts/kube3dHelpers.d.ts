@@ -3,6 +3,10 @@
 declare var THREE: any;
 declare var createGame: any;
 declare var terrain: any;
+declare var fly: any;
+declare var walk: any;
+declare var highlight: any;
+declare var player: any;
 declare module Kube3d {
     var pluginName: string;
     var log: Logging.Logger;
