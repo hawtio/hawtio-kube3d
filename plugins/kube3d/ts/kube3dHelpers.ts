@@ -8,6 +8,7 @@ var fly = require('voxel-fly');
 var walk = require('voxel-walk');
 var highlight = require('voxel-highlight');
 var player = require('voxel-player');
+var createSky = require('voxel-sky');
 
 module Kube3d {
   export var pluginName = 'Kube3d';

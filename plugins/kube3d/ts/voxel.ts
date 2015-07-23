@@ -12,7 +12,7 @@ module Kube3d {
 
     var el = $element.find('.kube3d-control')[0];
     var game = createGame({
-        lightsDisabled: false,
+        lightsDisabled: true,
         fogDisabled: false,
         generateChunks: false,
         texturePath: './img/textures/',
@@ -21,21 +21,17 @@ module Kube3d {
         container: el
       }, (game, avatar) => {
 
-        var bullet = new game.THREE.Mesh(new game.THREE.SphereGeometry(0.25, 32, 32), new game.THREE.MeshLambertMaterial({
-          color: 0xff0000
+        var bullet = new game.THREE.Mesh(new game.THREE.SphereGeometry(0.25, 32, 32), new game.THREE.MeshPhongMaterial({
+          color: 0x888888,
         }));
-
 
         function newCreature(texture) {
           var THREE = game.THREE;
           var boxTexture = THREE.ImageUtils.loadTexture(texture);
           boxTexture.minFilter = THREE.NearestFilter;
           var boxMaterial = new THREE.MeshPhongMaterial({
-            color: 0x00ff00, 
             map: boxTexture,
-            castShadow: true,
-            receiveShadow: true,
-            wireframe: false
+            alphaMap: boxTexture
           });
           var box = new THREE.Mesh(new THREE.CubeGeometry(game.cubeSize, game.cubeSize, game.cubeSize), boxMaterial);
           return box;
@@ -44,6 +40,13 @@ module Kube3d {
         var makeFly = fly(game);
         var target = game.controls.target();
         game.flyer = makeFly(target);
+
+        var sky = createSky({
+          game: game,
+          time: 800,
+          speed: 0.1,
+          color: new game.THREE.Color(game.skyColor)
+        });
 
         // highlight blocks when you look at them, hold <Ctrl> for block placement
         /*
@@ -84,6 +87,8 @@ module Kube3d {
         });
 
         game.on('tick', function(delta) {
+
+          // player
           walk.render(target.playerSkin);
           var vx = Math.abs(target.velocity.x);
           var vz = Math.abs(target.velocity.z);
@@ -92,6 +97,8 @@ module Kube3d {
           } else {
             walk.startWalking()
           }
+
+          // projectiles
           var toRemove = [];
           _.forEach(bullets, (bullet) => {
             if (bullet.lastPosition) {
@@ -124,10 +131,15 @@ module Kube3d {
           _.forEach(toRemove, (bullet) => {
             _.remove(bullets, bullet);
           });
+
+          sky()(delta);
+
           if (game.pendingChunks.length) {
             log.debug("Pending chunks, skipping entity creation");
             return;
           }
+
+          // creatures
           var creaturesToRemove = [];
           _.forIn(creatures, (creature, key) => {
             if (creature.hit && !creature.deleted) {
