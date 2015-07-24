@@ -7,6 +7,8 @@ module Kube3d {
 
   export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', ($scope, $element, model:Kubernetes.KubernetesModelService) => {
 
+    $scope.locked = true;
+
     var creatures = {};
     var bullets = [];
 
@@ -87,6 +89,11 @@ module Kube3d {
         });
 
         game.on('tick', function(delta) {
+          if ($scope.locked && !game.paused) {
+            log.debug("Game: ", game);
+            $scope.locked = false;
+            Core.$apply($scope);
+          }
 
           // player
           walk.render(target.playerSkin);
@@ -210,7 +217,18 @@ module Kube3d {
       game.showChunk(chunk);
     });
 
-    $scope.$on('kubernetesModelUpdated', (e, model) => {
+    function cleanup() {
+      if (game) {
+        game.destroy();
+        delete game;
+      }
+    }
+
+    // just to be on the safe side :-)
+    $element.on('$destroy', cleanup);
+    $scope.$on('$destroy', cleanup);
+
+    function updatePods(e, model) {
       log.debug("model updated: ", model);
       _.forIn(model.podsByKey, (pod, key) => {
         var creature:any = creatures[key];
@@ -222,8 +240,9 @@ module Kube3d {
         }
       });
       log.debug("Creatures:", creatures);
-    });
-
+    }
+    $scope.$on('kubernetesModelUpdated', updatePods);
+    updatePods(undefined, model);
   }]);
   
 }

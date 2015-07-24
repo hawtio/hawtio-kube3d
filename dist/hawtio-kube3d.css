@@ -12,17 +12,8 @@
   height: 100%;
 }
 
-.kube3d-instructions {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: inherit;
-  opacity: 0.5;
-} 
-
 .kube3d-instructions-wrapper {
+  pointer-events: none;
   opacity: 1.0;
   position: absolute;
   top: 50%;
@@ -31,6 +22,7 @@
 }
 
 .kube3d-start-title {
+  pointer-events: none;
   padding: 15px;
   border-radius: 15px;
   background-color: white;
