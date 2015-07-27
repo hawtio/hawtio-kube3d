@@ -1,6 +1,7 @@
 /// <reference path="kube3dPlugin.ts"/>
 /// <reference path="podlek.ts"/>
 /// <reference path="energyBolt.ts"/>
+/// <reference path="player.ts"/>
 
 module Kube3d {
 
@@ -29,6 +30,10 @@ module Kube3d {
         container: el
       }, (game, avatar) => {
         var target = game.controls.target();
+
+        var player = new Player(game, avatar, target);
+        entities[player.getName()] = player;
+
         var sky = createSky({
           game: game,
           time: 800,
@@ -58,7 +63,7 @@ module Kube3d {
           if (projectileCount() > maxProjectiles) {
             return;
           }
-          var bolt = new EnergyBolt(game, target, game.cameraVector());
+          var bolt = new EnergyBolt(game, target, game.cameraVector(), player.getName());
           entities[bolt.getName()] = bolt;
         });
 
@@ -69,37 +74,7 @@ module Kube3d {
             Core.$apply($scope);
           }
 
-          // player
-          walk.render(target.playerSkin);
-          var vx = Math.abs(target.velocity.x);
-          var vz = Math.abs(target.velocity.z);
-          if (vx > 0.001 || vz > 0.001) {
-            walk.stopWalking();
-          } else {
-            walk.startWalking()
-          }
-
-          // projectiles
-          /*
-          var toRemove = [];
-          _.forEach(bullets, (bullet) => {
-            bullet.tick(delta);
-            bullet.checkCollisions(entities);
-            if (bullet.isDestroyed()) {
-              toRemove.push(bullet);
-            }
-          });
-          _.forEach(toRemove, (bullet) => {
-            _.remove(bullets, bullet);
-          });
-          */
-
           sky()(delta);
-
-          if (game.pendingChunks.length) {
-            log.debug("Pending chunks, skipping entity creation");
-            return;
-          }
 
           // entities
           var entitiesToRemove = [];

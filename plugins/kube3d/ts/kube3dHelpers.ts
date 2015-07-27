@@ -4,9 +4,7 @@
 declare var THREE; // = require('threejs-build');
 var createGame = require('voxel-hello-world');
 var terrain = require('voxel-perlin-terrain');
-var fly = require('voxel-fly');
 var walk = require('voxel-walk');
-var highlight = require('voxel-highlight');
 var player = require('voxel-player');
 var createSky = require('voxel-sky');
 

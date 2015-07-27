@@ -4,12 +4,13 @@ declare module Kube3d {
         private game;
         private origin;
         private direction;
+        private owner;
         private name;
         private _entity;
         private lastPosition;
         private destroyed;
         private log;
-        constructor(game: any, origin: any, direction: any);
+        constructor(game: any, origin: any, direction: any, owner: string);
         entity: any;
         die(playerHit: any): void;
         hit(): void;

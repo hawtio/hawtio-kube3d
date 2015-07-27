@@ -10,7 +10,7 @@ module Kube3d {
     private destroyed = false;
     private log:Logging.Logger = undefined;
 
-    public constructor(private game, private origin, private direction) {
+    public constructor(private game, private origin, private direction, private owner:string) {
       var mesh = this.createMesh();
       mesh.position.set(origin.position.x, origin.position.y + 1, origin.position.z);
       var velocity = new game.THREE.Vector3(direction[0], direction[1], direction[2]);
@@ -69,7 +69,7 @@ module Kube3d {
       var bulletAABB = this.entity.aabb();
       var hit = false;
       _.forIn(entities, (creature, key) => {
-        if (key === this.getName()) {
+        if (key === this.getName() || key === this.owner) {
           return;
         }
         if (creature.needsSpawning() || hit) {
