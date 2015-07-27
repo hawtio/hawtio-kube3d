@@ -2,16 +2,26 @@
 
 module Kube3d {
 
+  var deathFrames = 1 * 60;
+  var maxHealth = 1;
+
   export class Podlek {
-    public deleted = false;
-    public hit = false;
+    private playerHit = false;
+    private dead = false;
+    private dying = false;
+    private deleteCalled = false;
     private _entity:any = undefined;
     private _clearInterval:() => void = undefined;
     private log:Logging.Logger = undefined;
+    private health = maxHealth;
+    private deathFrameCount = 0;
 
     public constructor(private model, private game, private _name:string, private _pod:any) {
       this.log = Logger.get('podlek-' + _name);
+    }
 
+    public getName() {
+      return this._name;
     }
 
     private createMesh() {
@@ -28,6 +38,7 @@ module Kube3d {
     }
 
     public destroy() {
+      this.dead = true;
       if (this.entity) {
         this.game.removeItem(this.entity);
       }
@@ -36,23 +47,64 @@ module Kube3d {
       }
     }
 
+    public checkCollisions(entities) {
+      // TODO
+    }
+
     public tick(delta) {
-      if (this.hit && this.inGame()) {
+      if (this.dead || !this._entity) {
+        return;
+      }
+      if (this.health <= 0) {
+        this.dying = true;
+      }
+      if (this.dying) {
         this.entity.mesh.scale.x = this.entity.mesh.scale.x + 0.05;
         this.entity.mesh.scale.z = this.entity.mesh.scale.z + 0.05;
+        this.deathFrameCount = this.deathFrameCount + 1;
+        if (this.deathFrameCount > deathFrames) {
+          this.destroy();
+        }
+      } else {
+        if (this.entity.mesh.position.y < -5) {
+          this.log.debug("I fell off the world!  dying...");
+          this.die(false);
+        }
       }
     }
 
-    public die() {
-      this.model['podsResource'].delete({ id: Kubernetes.getName(this.pod) });
-      this.deleted = true;
+    public shouldDie() {
+      return (!(this._name in this.model.podsByKey));
+    }
+
+    public isDestroyed() {
+      return this.dead;
+    }
+
+    public isDying() {
+      return this.dying || this.dead;
+    }
+
+    public hit() {
+      this.playerHit = true;
+      this.health = this.health - 1;
+      this.log.debug("I got hit!, health: ", this.health);
+    }
+
+    public die(playerHit = this.playerHit) {
+      this.log.debug("I'm dying!");
+      this.dying = true;
+      if (this.playerHit && !this.deleteCalled) {
+        this.log.debug("Deleting resource");
+        this.model['podsResource'].delete({ id: Kubernetes.getName(this.pod) });
+        this.deleteCalled = true;
+      }
       if (this.clearInterval) {
         this.clearInterval();
         delete this.clearInterval;
       }
       this.entity.velocity.y = 2;
       this.entity.resting = false;
-      log.debug("Creature hit: ", this);
     }
 
     public spawn(player) {
@@ -75,7 +127,7 @@ module Kube3d {
       };
       this.entity = this.game.addItem(item);
       this.clearInterval = this.game.setInterval(() => {
-        if (this.deleted) {
+        if (this.dying || this.dead) {
           return;
         }
         this.entity.velocity.x = (Math.random() * 10 - 5) * 0.005;
@@ -85,8 +137,8 @@ module Kube3d {
       }, Math.random() * 5000 + 500);
     }
 
-    public inGame() {
-      return angular.isDefined(this._entity);
+    public needsSpawning() {
+      return !angular.isDefined(this._entity);
     }
 
     public get name() {

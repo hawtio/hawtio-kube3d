@@ -4,6 +4,7 @@
 
 module Kube3d {
 
+  var maxProjectiles = 20;
   var chunkSize = 32;
   var generateChunk = terrain('hawtio', 0, 20, 50);
 
@@ -11,8 +12,11 @@ module Kube3d {
 
     $scope.locked = true;
 
-    var creatures = {};
-    var bullets = [];
+    var entities = {};
+
+    function projectileCount() {
+      return _.filter(_.keys(entities), (key) => _.startsWith('projectile-', key)).length;
+    }
 
     var el = $element.find('.kube3d-control')[0];
     var game = createGame({
@@ -24,15 +28,7 @@ module Kube3d {
         materialFlatColor: false,
         container: el
       }, (game, avatar) => {
-
-        var bullet = new game.THREE.Mesh(new game.THREE.SphereGeometry(0.25, 32, 32), new game.THREE.MeshPhongMaterial({
-          color: 0x888888,
-        }));
-
-        var makeFly = fly(game);
         var target = game.controls.target();
-        game.flyer = makeFly(target);
-
         var sky = createSky({
           game: game,
           time: 800,
@@ -59,10 +55,11 @@ module Kube3d {
         var currentMaterial = 1;
 
         game.on('fire', function (target, state) {
-          if (bullets.length > 10) {
+          if (projectileCount() > maxProjectiles) {
             return;
           }
-          bullets.push(new EnergyBolt(game, target, game.cameraVector()));
+          var bolt = new EnergyBolt(game, target, game.cameraVector());
+          entities[bolt.getName()] = bolt;
         });
 
         game.on('tick', function(delta) {
@@ -83,10 +80,11 @@ module Kube3d {
           }
 
           // projectiles
+          /*
           var toRemove = [];
           _.forEach(bullets, (bullet) => {
             bullet.tick(delta);
-            bullet.checkCollisions(creatures);
+            bullet.checkCollisions(entities);
             if (bullet.isDestroyed()) {
               toRemove.push(bullet);
             }
@@ -94,6 +92,7 @@ module Kube3d {
           _.forEach(toRemove, (bullet) => {
             _.remove(bullets, bullet);
           });
+          */
 
           sky()(delta);
 
@@ -102,30 +101,32 @@ module Kube3d {
             return;
           }
 
-          // creatures
-          var creaturesToRemove = [];
-          _.forIn(creatures, (creature, key) => {
-            if (creature.hit && !creature.deleted) {
-              creature.die();
-            }
-            if (!(key in model.podsByKey)) {
-              log.debug("need to delete creature ", key);
-              creaturesToRemove.push(key);
-            }
-            if (!creature.inGame()) {
-              log.debug("need to create creature ", key);
-              creature.spawn(target);
+          // entities
+          var entitiesToRemove = [];
+          _.forIn(entities, (entity, key) => {
+            if (entity.needsSpawning()) {
+              log.debug("need to create entity ", key);
+              entity.spawn(target);
             } else {
-              creature.tick(delta);
+
+              if (entity.shouldDie()) {
+                entity.die(false);
+              }
+
+              entity.tick(delta);
+              entity.checkCollisions(entities);
+
+              if (entity.isDestroyed()) {
+                entitiesToRemove.push(entity.getName());
+              }
             }
           });
-          _.forEach(creaturesToRemove, (key) => {
-            var creature = creatures[key];
+          _.forEach(entitiesToRemove, (key) => {
+            var creature = entities[key];
             if (!creature) {
               return;
             }
-            creature.destroy();
-            delete creatures[key];
+            delete entities[key];
           });
         });
       });
@@ -155,14 +156,14 @@ module Kube3d {
     function updatePods(e, model) {
       log.debug("model updated: ", model);
       _.forIn(model.podsByKey, (pod, key) => {
-        var creature:any = creatures[key];
+        var creature:any = entities[key];
         if (!creature) {
-          creature = creatures[key] = new Podlek(model, game, key, pod);
+          creature = entities[key] = new Podlek(model, game, key, pod);
         } else {
           creature.pod = pod;
         }
       });
-      log.debug("Creatures:", creatures);
+      log.debug("Creatures:", entities);
     }
     $scope.$on('kubernetesModelUpdated', updatePods);
     updatePods(undefined, model);

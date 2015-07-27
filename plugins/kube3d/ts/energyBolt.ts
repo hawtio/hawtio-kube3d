@@ -4,9 +4,11 @@ module Kube3d {
 
   export class EnergyBolt {
 
-    private entity:any = undefined;
+    private name:string = undefined;
+    private _entity:any = undefined;
     private lastPosition = undefined;
     private destroyed = false;
+    private log:Logging.Logger = undefined;
 
     public constructor(private game, private origin, private direction) {
       var mesh = this.createMesh();
@@ -19,6 +21,36 @@ module Kube3d {
         velocity: velocity
       }
       this.entity = game.addItem(item);
+      this.name = 'projectile-' + Date.now();
+      this.log = Logger.get(this.getName());
+    }
+
+    public get entity() {
+      return this._entity;
+    }
+
+    public set entity(e) {
+      this._entity = e;
+    }
+
+    public die(playerHit) {
+    
+    }
+
+    public hit() {
+
+    }
+
+    public needsSpawning() {
+      return false;
+    }
+
+    public shouldDie() {
+      return this.isDestroyed();
+    }
+
+    public getName() {
+      return this.name;
     }
 
     public destroy() {
@@ -37,13 +69,17 @@ module Kube3d {
       var bulletAABB = this.entity.aabb();
       var hit = false;
       _.forIn(entities, (creature, key) => {
-        if (!creature.inGame() || hit) {
+        if (key === this.getName()) {
+          return;
+        }
+        if (creature.needsSpawning() || hit) {
           return;
         }
         if (bulletAABB.intersects(creature.entity.aabb())) {
+          this.log.debug("I hit ", creature.getName());
           hit = true;
           this.destroy();
-          creature.hit = true;
+          creature.hit();
         }
       });
     }
