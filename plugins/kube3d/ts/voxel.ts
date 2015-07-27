@@ -17,7 +17,7 @@ module Kube3d {
         lightsDisabled: true,
         fogDisabled: false,
         generateChunks: false,
-        texturePath: './img/textures/',
+        texturePath: 'resources/textures/',
         materials: [['grass', 'dirt', 'grass_dirt'], 'brick', 'dirt'],
         materialFlatColor: false,
         container: el

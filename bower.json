@@ -13,7 +13,9 @@
     "**/.*",
     "node_modules",
     "libs",
-    "plugins"
+    "plugins",
+    "!img",
+    "!resources"
   ],
   "dependencies": {
     "hawtio-core": "~2.0.0",

@@ -207,7 +207,7 @@ gulp.task('clean', ['browserify'], function() {
 });
 
 gulp.task('watch', ['build', 'build-example'], function() {
-  plugins.watch(['libs/**/*.js', 'libs/**/*.css', 'index.html', config.dist + '/*'], function() {
+  plugins.watch(['resources/**', 'libs/**/*.js', 'libs/**/*.css', 'index.html', config.dist + '/*'], function() {
     gulp.start('reload');
   });
   plugins.watch(['libs/**/*.d.ts', config.ts, config.templates], function() {
