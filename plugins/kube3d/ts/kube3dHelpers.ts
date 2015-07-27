@@ -47,6 +47,10 @@ module Kube3d {
     return [x, y, z];
   }
 
+  export function maybe() {
+    return Math.random() < 0.5;
+  }
+
 
 
 }

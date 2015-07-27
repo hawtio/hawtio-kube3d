@@ -18,4 +18,5 @@ declare module Kube3d {
     function randomGrey(): string;
     function webglAvailable(): boolean;
     function placeObject(cellX: any, cellY: any, isFloor?: boolean): number[];
+    function maybe(): boolean;
 }
