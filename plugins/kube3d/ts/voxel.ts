@@ -2,6 +2,7 @@
 /// <reference path="podlek.ts"/>
 /// <reference path="energyBolt.ts"/>
 /// <reference path="player.ts"/>
+/// <reference path="sounds.ts"/>
 
 module Kube3d {
 
@@ -65,6 +66,8 @@ module Kube3d {
           }
           var bolt = new EnergyBolt(game, target, game.cameraVector(), player.getName());
           entities[bolt.getName()] = bolt;
+
+          playerLaser.play();
         });
 
         game.on('tick', function(delta) {

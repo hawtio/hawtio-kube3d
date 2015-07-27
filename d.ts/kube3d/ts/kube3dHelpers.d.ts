@@ -6,6 +6,8 @@ declare var terrain: any;
 declare var walk: any;
 declare var player: any;
 declare var createSky: any;
+declare var howler: any;
+declare var Howl: any;
 declare module Kube3d {
     var pluginName: string;
     var log: Logging.Logger;

@@ -30,6 +30,7 @@
     "wiredep": "^2.2.2"
   },
   "dependencies": {
+    "howler": "^1.1.26",
     "threejs-build": "^71.0.0",
     "voxel-creature": "^0.1.0",
     "voxel-engine": "^0.20.2",

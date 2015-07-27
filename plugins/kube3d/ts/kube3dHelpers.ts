@@ -7,6 +7,8 @@ var terrain = require('voxel-perlin-terrain');
 var walk = require('voxel-walk');
 var player = require('voxel-player');
 var createSky = require('voxel-sky');
+var howler = require('howler');
+declare var Howl;
 
 module Kube3d {
   export var pluginName = 'Kube3d';
