@@ -30,6 +30,27 @@ module Kube3d {
         materialFlatColor: false,
         container: el
       }, (game, avatar) => {
+
+
+
+        game.collideTerrain = function(other, bbox, vec, resting) {
+          var self = game;
+          var axes = ['x', 'y', 'z'];
+          var vec3 = [vec.x, vec.y, vec.z];
+          // log.debug("other:", other, " bbox: ", bbox, " vec:", vec, " resting:", resting);
+          self.collideVoxels(bbox, vec3, function hit(axis, tile, coords, dir, edge) {
+            if (!tile) 
+              return false;
+            if (Math.abs(vec3[axis]) <= Math.abs(edge)) 
+              return false;
+            vec3[axis] = vec[axes[axis]] = edge;
+            other.acceleration[axes[axis]] = 0;
+            resting[axes[axis]] = dir;
+            other.friction[axes[(axis + 1) % 3]] = other.friction[axes[(axis + 2) % 3]] = axis === 1 ? self.friction  : 1;
+            return true;
+          });
+        };
+
         var target = game.controls.target();
 
         var player = new Player(game, avatar, target);
@@ -76,6 +97,12 @@ module Kube3d {
             $scope.locked = false;
             Core.$apply($scope);
           }
+          _.forIn(model.podsByKey, (pod, key) => {
+            var creature:any = entities[key];
+            if (!creature) {
+              creature = entities[key] = new Podlek(model, game, key, pod);
+            }
+          });
 
           sky()(delta);
 

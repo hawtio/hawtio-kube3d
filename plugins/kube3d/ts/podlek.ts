@@ -19,6 +19,9 @@ module Kube3d {
     private box:any = undefined;
     private cloud:any = undefined;
 
+    private position:any = undefined;
+    private rotation:any = undefined;
+
     public constructor(private model, private game, private _name:string, private _pod:any) {
       this.log = Logger.get('podlek-' + _name);
     }
@@ -33,16 +36,23 @@ module Kube3d {
       var answer = new THREE.Object3D();
       var boxTexture = THREE.ImageUtils.loadTexture(this._pod.$iconUrl);
       boxTexture.minFilter = THREE.NearestFilter;
-      var boxMaterial = new THREE.MeshPhongMaterial({
-        map: boxTexture,
-        alphaMap: boxTexture
-      });
+      // commenting these now so I remember which element = which axis
+      var materials = [
+        new THREE.MeshLambertMaterial({ color: 0xffffff }), // + x-axis
+        new THREE.MeshLambertMaterial({ color: 0xffffff }), // - x-axis
+        new THREE.MeshLambertMaterial({ color: 0xffffff }), // + y-axis
+        new THREE.MeshLambertMaterial({ color: 0xffffff }), // - y-axis
+        new THREE.MeshLambertMaterial({ map: boxTexture }), // + z-axis
+        new THREE.MeshLambertMaterial({ color: 0xffffff })  // - z-axis
+      ];
+      var boxMaterial = new THREE.MeshFaceMaterial(materials);
       var box = this.box = new THREE.Mesh(new THREE.CubeGeometry(game.cubeSize, game.cubeSize, game.cubeSize), boxMaterial);
       var cloud = this.cloud = getParticles(THREE, game.cubeSize, 0xffffff, 1000);
       box.visible = true;
       cloud.visible = false;
       answer.add(box);
       answer.add(cloud);
+      answer.add(new THREE.AxisHelper(5));
       return answer;
     }
 
@@ -58,6 +68,58 @@ module Kube3d {
 
     public checkCollisions(entities) {
       // TODO
+    }
+
+    public lookAt(obj) {
+      var a = obj.position || obj;
+      var b = this.position;
+      this.rotation.y = Math.atan2(a.x - b.x, a.z - b.z) + Math.random() * 1/4 - 1/8;
+    }
+
+    public jump(amount = 0.015) {
+      this.log.debug("Jumping!");
+      this.entity.velocity.y = amount;
+      this.entity.resting = false;
+    }
+
+    public forward(amount = 0.015) {
+      /*
+      var angle = this.rotation.y;
+      var x = this.game.cubeSize / 2 * Math.sin(angle);
+      var z = this.game.cubeSize / 2 * Math.cos(angle);
+      this.entity.velocity.x = x * 0.01;
+      */
+      this.entity.velocity.z = amount;
+      this.entity.resting = false;
+
+      var angle = this.rotation.y;
+      var pt = this.position.clone();
+      pt.y = this.position.y;
+      pt.x += this.game.cubeSize / 2 * Math.sin(angle);
+      pt.z += this.game.cubeSize / 2 * Math.cos(angle);
+      if (this.game.getBlock(pt)) {
+        log.debug("block");
+        this.game.setTimeout(() => { this.jump() }, 10);
+      }
+    }
+
+    public move(x, y, z) {
+      this.entity.velocity.x += x;
+      this.entity.velocity.y  = y;
+      this.entity.velocity.z += z;
+      this.entity.resting = false;
+
+      if (this.entity.velocity.y === 0) {
+        var angle = this.rotation.y;
+        var pt = this.position.clone();
+        pt.y = this.position.y;
+        pt.x += this.game.cubeSize / 2 * Math.sin(angle);
+        pt.z += this.game.cubeSize / 2 * Math.cos(angle);
+        if (this.game.getBlock(pt)) {
+          log.debug("block");
+          this.game.setTimeout(() => { this.jump() }, 10);
+        }
+      }
     }
 
     public tick(delta) {
@@ -140,14 +202,30 @@ module Kube3d {
       var x = playerX + distX;
       var z = playerZ + distZ;
       this.log.debug("Spawning at x:", x, " z:", z, " player at x:", playerX, " z:", playerZ);
-      mesh.position.set(x, 30, z);
+      //mesh.position.set(x, 30, z);
       var item:any = {
         mesh: mesh,
-        size: 1,
+        size: this.game.cubeSize,
         velocity: { x: 0, y: 0, z: 0 }
       };
       this.entity = this.game.addItem(item);
-      this.clearInterval = this.game.setInterval(() => {
+      this.position = this.entity.yaw.position;
+      this.rotation = this.entity.yaw.rotation;
+      this.position.set(x, 20, z);
+
+      var walkAround = () => {
+        if (this.dying || this.dead || !this.entity || !this.rotation) {
+          return;
+        }
+        this.rotation.y += Math.random() * Math.PI / 2 - Math.PI / 4;
+        // this.jump();
+        this.forward();
+        this.clearInterval = this.game.setTimeout(walkAround, 1000);
+      }
+
+      walkAround();
+
+      /*this.clearInterval = this.game.setInterval(() => {
         if (this.dying || this.dead) {
           return;
         }
@@ -156,6 +234,7 @@ module Kube3d {
         this.entity.velocity.y = (Math.random() * 10 - 5) * 0.005;
         this.entity.resting = false;
       }, Math.random() * 5000 + 500);
+      */
     }
 
     public needsSpawning() {
