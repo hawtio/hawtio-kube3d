@@ -8,11 +8,16 @@ declare module Kube3d {
         private name;
         private _entity;
         private lastPosition;
-        private destroyed;
+        private dead;
+        private dying;
         private log;
+        private health;
+        private deathFrameCount;
+        private bullet;
+        private cloud;
         constructor(game: any, origin: any, direction: any, owner: string);
         entity: any;
-        die(playerHit: any): void;
+        die(playerHit?: boolean): void;
         hit(): void;
         needsSpawning(): boolean;
         shouldDie(): boolean;

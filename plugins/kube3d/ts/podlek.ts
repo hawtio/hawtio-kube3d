@@ -55,8 +55,8 @@ module Kube3d {
       if (this.dead || !this._entity) {
         return;
       }
-      if (this.health <= 0) {
-        this.dying = true;
+      if (this.health <= 0 && !this.dying) {
+        this.die();
       }
       if (this.dying) {
         this.entity.mesh.scale.x = this.entity.mesh.scale.x + 0.05;
