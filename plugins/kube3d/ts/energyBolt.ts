@@ -42,6 +42,9 @@ module Kube3d {
     }
 
     public die(playerHit = false) {
+      if (this.dying) {
+        return;
+      }
       this.dying = true;
       if (this.bullet) {
         this.bullet.visible = false;
@@ -144,16 +147,7 @@ module Kube3d {
       var bullet = new game.THREE.Mesh(new game.THREE.SphereGeometry(0.125, 8, 8), new game.THREE.MeshBasicMaterial({
         color: 0xff0000
       }));
-      var cloudGeometry = new THREE.Geometry();
-      for (var i = 0; i < 100; i++) {
-        var vertex = new THREE.Vector3();
-        vertex.x = Math.random() * 0.25 - 0.125;
-        vertex.y = Math.random() * 0.25 - 0.125;
-        vertex.z = Math.random() * 0.25 - 0.125;
-        cloudGeometry.vertices.push(vertex);
-      }
-      var material = new THREE.ParticleBasicMaterial({ size: 1 });
-      var cloud = new THREE.ParticleSystem(cloudGeometry, material);
+      var cloud = getParticles(THREE, 0.125, 0xff0000, 100);
       bullet.visible = true;
       cloud.visible = false;
       this.bullet = bullet;

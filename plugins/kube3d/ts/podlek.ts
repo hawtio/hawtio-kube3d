@@ -16,6 +16,9 @@ module Kube3d {
     private health = maxHealth;
     private deathFrameCount = 0;
 
+    private box:any = undefined;
+    private cloud:any = undefined;
+
     public constructor(private model, private game, private _name:string, private _pod:any) {
       this.log = Logger.get('podlek-' + _name);
     }
@@ -27,14 +30,20 @@ module Kube3d {
     private createMesh() {
       var game = this.game;
       var THREE = game.THREE;
+      var answer = new THREE.Object3D();
       var boxTexture = THREE.ImageUtils.loadTexture(this._pod.$iconUrl);
       boxTexture.minFilter = THREE.NearestFilter;
       var boxMaterial = new THREE.MeshPhongMaterial({
         map: boxTexture,
         alphaMap: boxTexture
       });
-      var box = new THREE.Mesh(new THREE.CubeGeometry(game.cubeSize, game.cubeSize, game.cubeSize), boxMaterial);
-      return box;
+      var box = this.box = new THREE.Mesh(new THREE.CubeGeometry(game.cubeSize, game.cubeSize, game.cubeSize), boxMaterial);
+      var cloud = this.cloud = getParticles(THREE, game.cubeSize, 0xffffff, 1000);
+      box.visible = true;
+      cloud.visible = false;
+      answer.add(box);
+      answer.add(cloud);
+      return answer;
     }
 
     public destroy() {
@@ -59,8 +68,12 @@ module Kube3d {
         this.die();
       }
       if (this.dying) {
-        this.entity.mesh.scale.x = this.entity.mesh.scale.x + 0.05;
-        this.entity.mesh.scale.z = this.entity.mesh.scale.z + 0.05;
+        this.entity.velocity.x = 0;
+        this.entity.velocity.y = 0;
+        this.entity.velocity.z = 0;
+        this.entity.mesh.scale.x = this.entity.mesh.scale.x + 0.2;
+        this.entity.mesh.scale.y = this.entity.mesh.scale.y + 0.2;
+        this.entity.mesh.scale.z = this.entity.mesh.scale.z + 0.2;
         this.deathFrameCount = this.deathFrameCount + 1;
         if (this.deathFrameCount > deathFrames) {
           this.destroy();
@@ -92,6 +105,9 @@ module Kube3d {
     }
 
     public die(playerHit = this.playerHit) {
+      if (this.dying) {
+        return;
+      }
       this.log.debug("I'm dying!");
       this.dying = true;
       if (this.playerHit && !this.deleteCalled) {
@@ -103,8 +119,13 @@ module Kube3d {
         this.clearInterval();
         delete this.clearInterval;
       }
-      this.entity.velocity.y = 2;
-      this.entity.resting = false;
+      if (this.box) {
+        this.box.visible = false;
+      }
+      if (this.cloud) {
+        this.cloud.visible = true;
+      }
+      this.entity.resting = true;
     }
 
     public spawn(player) {

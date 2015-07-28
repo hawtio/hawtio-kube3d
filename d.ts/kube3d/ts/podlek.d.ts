@@ -14,6 +14,8 @@ declare module Kube3d {
         private log;
         private health;
         private deathFrameCount;
+        private box;
+        private cloud;
         constructor(model: any, game: any, _name: string, _pod: any);
         getName(): string;
         private createMesh();

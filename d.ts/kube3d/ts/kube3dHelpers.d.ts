@@ -17,6 +17,7 @@ declare module Kube3d {
     function rgbToHex(r: any, g: any, b: any): string;
     function randomGrey(): string;
     function webglAvailable(): boolean;
+    function getParticles(THREE: any, size: any, color: any, amount: any): any;
     function placeObject(cellX: any, cellY: any, isFloor?: boolean): number[];
     function maybe(): boolean;
 }

@@ -40,6 +40,20 @@ module Kube3d {
     }
   }
 
+  export function getParticles(THREE, size, color, amount) {
+    var geometry = new THREE.Geometry();
+    var halfSize = size / 2.0;
+    for (var i = 0; i < amount; i++) {
+      var vertex = new THREE.Vector3();
+      vertex.x = Math.random() * size - halfSize;
+      vertex.y = Math.random() * size - halfSize;
+      vertex.z = Math.random() * size - halfSize;
+      geometry.vertices.push(vertex);
+    }
+    var material = new THREE.ParticleBasicMaterial({ color: color, size: 1 });
+    return new THREE.ParticleSystem(geometry, material);
+  }
+
   export function placeObject(cellX, cellY, isFloor = false) {
     var x = cellX * CELL_SIZE;
     var z = cellY * CELL_SIZE;
