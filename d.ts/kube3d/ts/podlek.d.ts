@@ -18,6 +18,8 @@ declare module Kube3d {
         private cloud;
         private position;
         private rotation;
+        private desiredAngle;
+        private turning;
         constructor(model: any, game: any, _name: string, _pod: any);
         getName(): string;
         private createMesh();
@@ -26,7 +28,6 @@ declare module Kube3d {
         lookAt(obj: any): void;
         jump(amount?: number): void;
         forward(amount?: number): void;
-        move(x: any, y: any, z: any): void;
         tick(delta: any): void;
         shouldDie(): boolean;
         isDestroyed(): boolean;

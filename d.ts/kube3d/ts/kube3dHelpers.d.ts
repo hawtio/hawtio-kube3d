@@ -14,6 +14,7 @@ declare module Kube3d {
     var templatePath: string;
     var havePointerLock: boolean;
     var HalfPI: number;
+    var QuarterPI: number;
     function rgbToHex(r: any, g: any, b: any): string;
     function randomGrey(): string;
     function webglAvailable(): boolean;

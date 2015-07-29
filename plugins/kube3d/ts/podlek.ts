@@ -22,6 +22,9 @@ module Kube3d {
     private position:any = undefined;
     private rotation:any = undefined;
 
+    private desiredAngle:any = 0;
+    private turning = false;
+
     public constructor(private model, private game, private _name:string, private _pod:any) {
       this.log = Logger.get('podlek-' + _name);
     }
@@ -59,9 +62,11 @@ module Kube3d {
       answer.add(box);
       answer.add(cloud);
       // debugging
+      /*
       var axis = new THREE.AxisHelper(5);
       axis.position.y = heightOffset;
       answer.add(axis);
+      */
       //
       return answer;
     }
@@ -86,49 +91,36 @@ module Kube3d {
       this.rotation.y = Math.atan2(a.x - b.x, a.z - b.z) + Math.random() * 1/4 - 1/8;
     }
 
-    public jump(amount = 0.015) {
+    public jump(amount = 0.017) {
+      if (this._entity.velocity.y !== 0) {
+        return;
+      }
       this.log.debug("Jumping!");
       this.entity.velocity.y = amount;
-      this.entity.resting = false;
+      // this.entity.resting = false;
     }
 
-    public forward(amount = 0.015) {
-      /*
-      var angle = this.rotation.y;
-      var x = this.game.cubeSize / 2 * Math.sin(angle);
-      var z = this.game.cubeSize / 2 * Math.cos(angle);
-      this.entity.velocity.x = x * 0.01;
-      */
+    public forward(amount = 0.025) {
+      if (this._entity.velocity.y !== 0) {
+        return;
+      }
+      this.log.debug("atRestY", this._entity.atRestY());
       this.entity.velocity.z = amount;
-      this.entity.resting = false;
 
       var angle = this.rotation.y;
       var pt = this.position.clone();
       pt.y = this.position.y;
       pt.x += this.game.cubeSize / 2 * Math.sin(angle);
       pt.z += this.game.cubeSize / 2 * Math.cos(angle);
-      if (this.game.getBlock(pt)) {
-        log.debug("block");
-        this.game.setTimeout(() => { this.jump() }, 10);
-      }
-    }
-
-    public move(x, y, z) {
-      this.entity.velocity.x += x;
-      this.entity.velocity.y  = y;
-      this.entity.velocity.z += z;
-      this.entity.resting = false;
-
-      if (this.entity.velocity.y === 0) {
-        var angle = this.rotation.y;
-        var pt = this.position.clone();
-        pt.y = this.position.y;
-        pt.x += this.game.cubeSize / 2 * Math.sin(angle);
-        pt.z += this.game.cubeSize / 2 * Math.cos(angle);
-        if (this.game.getBlock(pt)) {
-          log.debug("block");
-          this.game.setTimeout(() => { this.jump() }, 10);
-        }
+      var block = this.game.getBlock(pt);
+      if (block !== false) {
+        log.debug("block: ", block);
+        this.game.setTimeout(() => { 
+          this.jump();
+          this.game.setTimeout(() => {
+            this.entity.velocity.z = 0.017;
+          }, 100);
+        }, 500);
       }
     }
 
@@ -151,6 +143,14 @@ module Kube3d {
           this.destroy();
         }
       } else {
+        var angle = this.desiredAngle.toPrecision(2);
+        if (this.turning && this.rotation.y < angle) {
+          this.rotation.y += 0.01;
+        } else if (this.turning && this.rotation.y > angle) {
+          this.rotation.y -= 0.01;
+        } else {
+          this.turning = false;
+        }
         if (this.entity.mesh.position.y < -5) {
           this.log.debug("I fell off the world!  dying...");
           this.die(false);
@@ -197,7 +197,6 @@ module Kube3d {
       if (this.cloud) {
         this.cloud.visible = true;
       }
-      this.entity.resting = true;
     }
 
     public spawn(player) {
@@ -224,13 +223,16 @@ module Kube3d {
       this.position.set(x, 20, z);
 
       var walkAround = () => {
-        if (this.dying || this.dead || !this.entity || !this.rotation) {
+        if (this.dying || this.dead || !this.entity) {
           return;
         }
-        this.rotation.y += Math.random() * Math.PI / 2 - Math.PI / 4;
-        // this.jump();
+        if (maybe()) {
+          this.desiredAngle += Math.random() * HalfPI - QuarterPI;
+          this.turning = true;
+        }
         this.forward();
-        this.clearInterval = this.game.setTimeout(walkAround, 1000);
+        //this.jump();
+        this.clearInterval = this.game.setTimeout(walkAround, Math.random() * 1000 + 500);
       }
 
       walkAround();

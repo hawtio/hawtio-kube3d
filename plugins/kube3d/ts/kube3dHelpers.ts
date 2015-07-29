@@ -18,6 +18,7 @@ module Kube3d {
 
 
   export var HalfPI = Math.PI / 2;
+  export var QuarterPI = Math.PI / 4;
 
   export function rgbToHex(r, g, b) {
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
