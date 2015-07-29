@@ -33,6 +33,10 @@ module Kube3d {
     private createMesh() {
       var game = this.game;
       var THREE = game.THREE;
+      var height = game.cubeSize;
+      var width = game.cubeSize;
+      var depth = game.cubeSize;
+      var heightOffset = height / 2;
       var answer = new THREE.Object3D();
       var boxTexture = THREE.ImageUtils.loadTexture(this._pod.$iconUrl);
       boxTexture.minFilter = THREE.NearestFilter;
@@ -46,13 +50,19 @@ module Kube3d {
         new THREE.MeshLambertMaterial({ color: 0xffffff })  // - z-axis
       ];
       var boxMaterial = new THREE.MeshFaceMaterial(materials);
-      var box = this.box = new THREE.Mesh(new THREE.CubeGeometry(game.cubeSize, game.cubeSize, game.cubeSize), boxMaterial);
+      var box = this.box = new THREE.Mesh(new THREE.CubeGeometry(height, width, depth), boxMaterial);
       var cloud = this.cloud = getParticles(THREE, game.cubeSize, 0xffffff, 1000);
       box.visible = true;
       cloud.visible = false;
+      box.position.y = heightOffset;
+      cloud.position.y = heightOffset;
       answer.add(box);
       answer.add(cloud);
-      answer.add(new THREE.AxisHelper(5));
+      // debugging
+      var axis = new THREE.AxisHelper(5);
+      axis.position.y = heightOffset;
+      answer.add(axis);
+      //
       return answer;
     }
 
@@ -133,9 +143,9 @@ module Kube3d {
         this.entity.velocity.x = 0;
         this.entity.velocity.y = 0;
         this.entity.velocity.z = 0;
-        this.entity.mesh.scale.x = this.entity.mesh.scale.x + 0.2;
-        this.entity.mesh.scale.y = this.entity.mesh.scale.y + 0.2;
-        this.entity.mesh.scale.z = this.entity.mesh.scale.z + 0.2;
+        this.cloud.scale.x = this.cloud.scale.x + 0.2;
+        this.cloud.scale.y = this.cloud.scale.y + 0.2;
+        this.cloud.scale.z = this.cloud.scale.z + 0.2;
         this.deathFrameCount = this.deathFrameCount + 1;
         if (this.deathFrameCount > deathFrames) {
           this.destroy();

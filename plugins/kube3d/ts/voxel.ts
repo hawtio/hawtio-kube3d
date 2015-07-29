@@ -31,26 +31,6 @@ module Kube3d {
         container: el
       }, (game, avatar) => {
 
-
-
-        game.collideTerrain = function(other, bbox, vec, resting) {
-          var self = game;
-          var axes = ['x', 'y', 'z'];
-          var vec3 = [vec.x, vec.y, vec.z];
-          // log.debug("other:", other, " bbox: ", bbox, " vec:", vec, " resting:", resting);
-          self.collideVoxels(bbox, vec3, function hit(axis, tile, coords, dir, edge) {
-            if (!tile) 
-              return false;
-            if (Math.abs(vec3[axis]) <= Math.abs(edge)) 
-              return false;
-            vec3[axis] = vec[axes[axis]] = edge;
-            other.acceleration[axes[axis]] = 0;
-            resting[axes[axis]] = dir;
-            other.friction[axes[(axis + 1) % 3]] = other.friction[axes[(axis + 2) % 3]] = axis === 1 ? self.friction  : 1;
-            return true;
-          });
-        };
-
         var target = game.controls.target();
 
         var player = new Player(game, avatar, target);

@@ -116,9 +116,9 @@ module Kube3d {
         this.entity.velocity.x = 0;
         this.entity.velocity.y = 0;
         this.entity.velocity.z = 0;
-        this.entity.mesh.scale.x = this.entity.mesh.scale.x + 0.5;
-        this.entity.mesh.scale.y = this.entity.mesh.scale.y + 0.5;
-        this.entity.mesh.scale.z = this.entity.mesh.scale.z + 0.5;
+        this.cloud.scale.x = this.cloud.scale.x + 0.5;
+        this.cloud.scale.y = this.cloud.scale.y + 0.5;
+        this.cloud.scale.z = this.cloud.scale.z + 0.5;
         this.deathFrameCount = this.deathFrameCount + 1;
         if (this.deathFrameCount > deathFrames) {
           this.destroy();
@@ -152,7 +152,9 @@ module Kube3d {
       cloud.visible = false;
       this.bullet = bullet;
       this.cloud = cloud;
-      answer.add(new THREE.PointLight(0xff0000, 0.5, 0));
+      var light = new THREE.PointLight(0xff0000, 0,5, 0);
+      bullet.position.y = cloud.position.y = light.position.y = 0.7;
+      answer.add(light);
       answer.add(bullet);
       answer.add(cloud);
       return answer;
