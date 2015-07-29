@@ -200,6 +200,7 @@ module Kube3d {
     }
 
     public spawn(player) {
+      var game = this.game;
       var mesh = this.createMesh();
       mesh.name = this._name;
       var playerX = player.position.x;
@@ -208,19 +209,21 @@ module Kube3d {
       var distZ = Math.random() * 30 + 10;
       distX = maybe() ? distX : distX * -1;
       distZ = maybe() ? distZ : distZ * -1;
-      var x = playerX + distX;
-      var z = playerZ + distZ;
-      this.log.debug("Spawning at x:", x, " z:", z, " player at x:", playerX, " z:", playerZ);
+      var x = Math.round(playerX + distX);
+      var z = Math.round(playerZ + distZ);
+      // find the right height to spawn at;
+      var y = getY(game, x, z);
+      this.log.debug("Spawning at x:", x, " y: ", y, " z:", z, " player at x:", playerX, " z:", playerZ);
       //mesh.position.set(x, 30, z);
       var item:any = {
         mesh: mesh,
         size: this.game.cubeSize,
         velocity: { x: 0, y: 0, z: 0 }
       };
-      this.entity = this.game.addItem(item);
+      this.entity = game.addItem(item);
       this.position = this.entity.yaw.position;
       this.rotation = this.entity.yaw.rotation;
-      this.position.set(x, 20, z);
+      this.position.set(x, y, z);
 
       var walkAround = () => {
         if (this.dying || this.dead || !this.entity) {

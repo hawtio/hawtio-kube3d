@@ -8,7 +8,7 @@ module Kube3d {
 
   var maxProjectiles = 20;
   var chunkSize = 32;
-  var generateChunk = terrain('hawtio', 0, 20, 50);
+  var generateChunk = terrain('hawtio', 0, 30, 50);
 
   export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', ($scope, $element, model:Kubernetes.KubernetesModelService) => {
 
@@ -26,7 +26,7 @@ module Kube3d {
         fogDisabled: false,
         generateChunks: false,
         texturePath: 'resources/textures/',
-        materials: [['grass', 'dirt', 'grass_dirt'], 'brick', 'dirt'],
+        materials: [['grass', 'dirt', 'grass_dirt'], 'dirt', 'brick'],
         materialFlatColor: false,
         container: el
       }, (game, avatar) => {

@@ -2,7 +2,7 @@
 /// <reference path="kube3dInterfaces.d.ts" />
 declare var THREE: any;
 declare var createGame: any;
-declare var terrain: any;
+declare var noise: any;
 declare var walk: any;
 declare var player: any;
 declare var createSky: any;
@@ -21,4 +21,6 @@ declare module Kube3d {
     function getParticles(THREE: any, size: any, color: any, amount: any): any;
     function placeObject(cellX: any, cellY: any, isFloor?: boolean): number[];
     function maybe(): boolean;
+    function terrain(seed: any, floor: any, ceiling: any, divisor: any): (position: any, width: any) => Int8Array;
+    function getY(game: any, x: any, z: any): number;
 }

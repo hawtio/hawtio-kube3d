@@ -3,7 +3,7 @@
 
 declare var THREE; // = require('threejs-build');
 var createGame = require('voxel-hello-world');
-var terrain = require('voxel-perlin-terrain');
+var noise = require('perlin').noise;
 var walk = require('voxel-walk');
 var player = require('voxel-player');
 var createSky = require('voxel-sky');
@@ -66,6 +66,63 @@ module Kube3d {
     return Math.random() < 0.5;
   }
 
+  export function terrain(seed, floor, ceiling, divisor) {
+    floor = floor || 0;
+    ceiling = ceiling || 20; // minecraft's limit
+    divisor = divisor || 50;
+    noise.seed(seed);
+    return function generateChunk(position, width) {
+      var startX = position[0] * width;
+      var startY = position[1] * width;
+      var startZ = position[2] * width;
+      var chunk = new Int8Array(width * width * width);
 
+      pointsInside(startX, startZ, width, function(x, z) {
+        var n = noise.simplex2(x / divisor , z / divisor);
+        var y = ~~scale(n, -1, 1, floor, ceiling);
+        if (y > ceiling - 1) {
+          log.debug("y>ceiling");
+        }
+        if (y === floor || startY < y && y < startY + width) {
+          setBlock(chunk, x, y, z, width, 1);
+          // fill in underneath too
+          if (y > 0) {
+            for (y = y - 1; y > 0; y--) {
+              setBlock(chunk, x, y, z, width, 2);
+            }
+          }
+        }
+      });
+      return chunk;
+    }
+  }
+
+  export function getY(game, x, z) {
+    var y = 1;
+    var block = game.getBlock([x, y, z]);
+    while(block || y === 40) {
+      y = y + 1;
+      block = game.getBlock([x, y, z]);
+    }
+    return y;
+  }
+
+  function setBlock(chunk, x, y, z, width, value) {
+    var xidx = Math.abs((width + x % width) % width);
+    var yidx = Math.abs((width + y % width) % width);
+    var zidx = Math.abs((width + z % width) % width);
+    var idx = xidx + yidx * width + zidx * width * width;
+    chunk[idx] = value;
+  }
+
+  function pointsInside(startX, startY, width, func) {
+    for (var x = startX; x < startX + width; x++)
+      for (var y = startY; y < startY + width; y++)
+        func(x, y);
+  }
+
+  function scale( x, fromLow, fromHigh, toLow, toHigh ) {
+    return ( x - fromLow ) * ( toHigh - toLow ) / ( fromHigh - fromLow ) + toLow;
+  }
 
 }
