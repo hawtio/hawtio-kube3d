@@ -20,12 +20,15 @@ declare module Kube3d {
         private rotation;
         private desiredAngle;
         private turning;
+        private noticed;
+        private cooldown;
         constructor(model: any, game: any, _name: string, _pod: any);
         getName(): string;
         private createMesh();
         destroy(): void;
         checkCollisions(entities: any): void;
         lookAt(obj: any): void;
+        notice(target: any, radius: any): any;
         jump(amount?: number): void;
         forward(amount?: number): void;
         tick(delta: any): void;

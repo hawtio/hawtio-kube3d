@@ -20,7 +20,7 @@ module Kube3d {
 
     public constructor(private game, private origin, private direction, private owner:string) {
       var mesh = this.createMesh();
-      mesh.position.set(origin.position.x, origin.position.y + 1, origin.position.z);
+      mesh.position.set(origin.position.x, origin.position.y + 0.5, origin.position.z);
       var velocity = new game.THREE.Vector3(direction[0], direction[1], direction[2]);
       velocity.multiplyScalar(0.05);
       var item:any = {

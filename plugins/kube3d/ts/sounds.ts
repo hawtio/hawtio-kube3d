@@ -7,4 +7,8 @@ module Kube3d {
     loop: false
   });
 
+  export var podlekLaser = new Howl({
+    urls: ['resources/sounds/151022__bubaproducer__laser-shot-silenced.wav'],
+    loop: false
+  });
 }

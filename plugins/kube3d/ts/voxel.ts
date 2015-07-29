@@ -61,14 +61,30 @@ module Kube3d {
         // block interaction stuff, uses highlight data
         var currentMaterial = 1;
 
-        game.on('fire', function (target, state) {
+        game.on('fire', function (origin, state) {
           if (projectileCount() > maxProjectiles) {
             return;
           }
-          var bolt = new EnergyBolt(game, target, game.cameraVector(), player.getName());
+          var name = origin.getName ? origin.getName() : player.getName();
+          var direction = origin.getName ? null : game.cameraVector();
+          if (!direction) {
+            var z = Math.cos(origin.rotation.y);
+            var x = Math.sin(origin.rotation.y);
+            var y = game.THREE.Math.degToRad(20);
+            direction = [x, y, z];
+          }
+          var bolt = new EnergyBolt(game, origin, direction, name);
           entities[bolt.getName()] = bolt;
-
-          playerLaser.play();
+          if (!origin.getName) {
+            playerLaser.play();
+          } else {
+            var distX = Math.abs(target.position.x - origin.position.x);
+            var distY = Math.abs(target.position.z - origin.position.z);
+            var dist = ((distX + distY) / 2) + 1;
+            var volume = 1.0 / (dist * 0.5);
+            var id = podlekLaser.play();
+            podlekLaser.volume(volume, id);
+          }
         });
 
         game.on('tick', function(delta) {

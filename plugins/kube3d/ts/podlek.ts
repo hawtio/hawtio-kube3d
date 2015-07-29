@@ -4,6 +4,7 @@ module Kube3d {
 
   var deathFrames = 1 * 60;
   var maxHealth = 1;
+  var laserCooldownTime = 1 * 60;
 
   export class Podlek {
     private playerHit = false;
@@ -24,6 +25,8 @@ module Kube3d {
 
     private desiredAngle:any = 0;
     private turning = false;
+    private noticed = false;
+    private cooldown = 0;
 
     public constructor(private model, private game, private _name:string, private _pod:any) {
       this.log = Logger.get('podlek-' + _name);
@@ -88,23 +91,34 @@ module Kube3d {
     public lookAt(obj) {
       var a = obj.position || obj;
       var b = this.position;
-      this.rotation.y = Math.atan2(a.x - b.x, a.z - b.z) + Math.random() * 1/4 - 1/8;
+      this.desiredAngle = Math.atan2(a.x - b.x, a.z - b.z) + Math.random() * 1/4 - 1/8;
+    }
+
+    public notice(target, radius) {
+      var t = target.position || target;
+      return this.game.setInterval(() => {
+        var dist = this.position.distanceTo(t);
+        if (dist < radius) {
+          this.lookAt(t);
+          this.noticed = true;
+        } else {
+          this.noticed = false;
+        }
+      }, 1000);
     }
 
     public jump(amount = 0.017) {
       if (this._entity.velocity.y !== 0) {
         return;
       }
-      this.log.debug("Jumping!");
+      // this.log.debug("Jumping!");
       this.entity.velocity.y = amount;
-      // this.entity.resting = false;
     }
 
     public forward(amount = 0.025) {
       if (this._entity.velocity.y !== 0) {
         return;
       }
-      this.log.debug("atRestY", this._entity.atRestY());
       this.entity.velocity.z = amount;
 
       var angle = this.rotation.y;
@@ -114,7 +128,6 @@ module Kube3d {
       pt.z += this.game.cubeSize / 2 * Math.cos(angle);
       var block = this.game.getBlock(pt);
       if (block !== false) {
-        log.debug("block: ", block);
         this.game.setTimeout(() => { 
           this.jump();
           this.game.setTimeout(() => {
@@ -150,6 +163,12 @@ module Kube3d {
           this.rotation.y -= 0.01;
         } else {
           this.turning = false;
+        }
+        if (this.noticed && this.cooldown < 0 && maybe()) {
+          this.game.emit('fire', this);
+          this.cooldown = laserCooldownTime;
+        } else if (this.noticed) {
+          this.cooldown--;
         }
         if (this.entity.mesh.position.y < -5) {
           this.log.debug("I fell off the world!  dying...");
@@ -229,27 +248,15 @@ module Kube3d {
         if (this.dying || this.dead || !this.entity) {
           return;
         }
-        if (maybe()) {
+        if (!this.noticed && maybe()) {
           this.desiredAngle += Math.random() * HalfPI - QuarterPI;
           this.turning = true;
         }
         this.forward();
-        //this.jump();
         this.clearInterval = this.game.setTimeout(walkAround, Math.random() * 1000 + 500);
       }
-
+      this.notice(player, 20);
       walkAround();
-
-      /*this.clearInterval = this.game.setInterval(() => {
-        if (this.dying || this.dead) {
-          return;
-        }
-        this.entity.velocity.x = (Math.random() * 10 - 5) * 0.005;
-        this.entity.velocity.z = (Math.random() * 10 - 5) * 0.005;
-        this.entity.velocity.y = (Math.random() * 10 - 5) * 0.005;
-        this.entity.resting = false;
-      }, Math.random() * 5000 + 500);
-      */
     }
 
     public needsSpawning() {
