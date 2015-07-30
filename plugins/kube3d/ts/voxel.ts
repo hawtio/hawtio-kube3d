@@ -8,8 +8,8 @@ module Kube3d {
 
   var maxProjectiles = 20;
   var chunkSize = 32;
-  var generateChunk = perlinTerrain();
-  // var generateChunk = flatTerrain();
+  // var generateChunk = perlinTerrain();
+  var generateChunk = flatTerrain();
 
   export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', ($scope, $element, model:Kubernetes.KubernetesModelService) => {
 

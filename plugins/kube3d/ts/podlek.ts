@@ -220,8 +220,6 @@ module Kube3d {
 
     public spawn(player) {
       var game = this.game;
-      var mesh = this.createMesh();
-      mesh.name = this._name;
       var playerX = player.position.x;
       var playerZ = player.position.z;
       var distX = Math.random() * 30 + 10;
@@ -232,6 +230,12 @@ module Kube3d {
       var z = Math.round(playerZ + distZ);
       // find the right height to spawn at;
       var y = getY(game, x, z);
+      if (y === null) {
+        log.debug("Not spawning, world isn't ready yet");
+        return;
+      }
+      var mesh = this.createMesh();
+      mesh.name = this._name;
       this.log.debug("Spawning at x:", x, " y: ", y, " z:", z, " player at x:", playerX, " z:", playerZ);
       //mesh.position.set(x, 30, z);
       var item:any = {

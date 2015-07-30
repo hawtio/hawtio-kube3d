@@ -72,23 +72,29 @@ module Kube3d {
       var startX = position[0] * width;
       var startY = position[1] * width;
       var startZ = position[2] * width;
-      for (var y = startY; y < startY + width; y++) {
-        for (var x = startX; x < startX + width; x++) {
-          for (var z = startZ; z < startZ + width; z++) {
-            if (position[1] === 0 && y > 0 && y < 5) {
-              setBlock(chunk, x, y, z, width, 1);
-            } else {
-              setBlock(chunk, x, y, z, width, 0);
-            }
-          }
+      blockIterator(startX, startY, startZ, width, (x, y, z, width) => {
+        if (position[1] === 0 && y > 0 && y < 5) {
+          setBlock(chunk, x, y, z, width, 1);
+        } else {
+          setBlock(chunk, x, y, z, width, 0);
         }
-      }
+      });
       return chunk;
     }
   }
 
   export function cityTerrain(options:any = {}) {
 
+  }
+
+  function blockIterator(startX, startY, startZ, width, func) {
+    for (var y = startY; y < startY + width; y++) {
+      for (var x = startX; x < startX + width; x++) {
+        for (var z = startZ; z < startZ + width; z++) {
+          func(x, y, z, width);
+        }
+      }
+    }
   }
 
   export function perlinTerrain(options:any = {}) {
@@ -117,14 +123,9 @@ module Kube3d {
           }
         });
       } else {
-        for (var y = startY; y < startY + width; y++) {
-          for (var x = startX; x < startX + width; x++) {
-            for (var z = startZ; z < startZ + width; z++) {
-              setBlock(chunk, x, y, z, width, 0);
-            }
-          }
-        }
-
+        blockIterator(startX, startY, startZ, width, (x, y, z, width) => {
+          setBlock(chunk, x, y, z, width, 0);
+        });
       }
       return chunk;
     }
@@ -133,6 +134,9 @@ module Kube3d {
   export function getY(game, x, z) {
     var y = 1;
     var block = game.getBlock([x, y, z]);
+    if (block === false) {
+      return null;
+    }
     while(block !== 0 && y < 40) {
       y = y + 1;
       block = game.getBlock([x, y, z]);
