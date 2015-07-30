@@ -1,4 +1,5 @@
 /// <reference path="kube3dHelpers.ts"/>
+/// <reference path="sounds.ts"/>
 
 module Kube3d {
 
@@ -22,6 +23,7 @@ module Kube3d {
 
     private position:any = undefined;
     private rotation:any = undefined;
+    private player:any = undefined;
 
     private desiredAngle:any = 0;
     private turning = false;
@@ -216,6 +218,7 @@ module Kube3d {
       if (this.cloud) {
         this.cloud.visible = true;
       }
+      playSound(podlekExplosion, this.player, this);
     }
 
     public spawn(player) {
@@ -234,6 +237,7 @@ module Kube3d {
         log.debug("Not spawning, world isn't ready yet");
         return;
       }
+      this.player = player;
       var mesh = this.createMesh();
       mesh.name = this._name;
       this.log.debug("Spawning at x:", x, " y: ", y, " z:", z, " player at x:", playerX, " z:", playerZ);

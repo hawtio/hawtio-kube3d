@@ -131,6 +131,25 @@ module Kube3d {
     }
   }
 
+  export function getVolume(player, entity) {
+    var distX = Math.abs(player.position.x - entity.position.x);
+    var distY = Math.abs(player.position.z - entity.position.z);
+    var dist = ((distX + distY) / 2) + 1;
+    var volume = 1.0 / (dist * 0.5);
+    return volume;
+  }
+
+  export function playSound(sound, player, entity) {
+    if (!sound) {
+      return;
+    }
+    var volume = getVolume(player, entity);
+    if (volume) {
+      var id = sound.play();
+      sound.volume(volume, id);
+    }
+  }
+
   export function getY(game, x, z) {
     var y = 1;
     var block = game.getBlock([x, y, z]);

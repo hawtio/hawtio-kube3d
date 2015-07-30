@@ -1,4 +1,5 @@
 /// <reference path="kube3dHelpers.d.ts" />
+/// <reference path="sounds.d.ts" />
 declare module Kube3d {
     class EnergyBolt {
         private game;
@@ -15,6 +16,7 @@ declare module Kube3d {
         private deathFrameCount;
         private bullet;
         private cloud;
+        private position;
         constructor(game: any, origin: any, direction: any, owner: string);
         entity: any;
         die(playerHit?: boolean): void;

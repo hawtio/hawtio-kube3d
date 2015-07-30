@@ -24,5 +24,7 @@ declare module Kube3d {
     function flatTerrain(options?: any): (position: any, width: any) => Int8Array;
     function cityTerrain(options?: any): void;
     function perlinTerrain(options?: any): (position: any, width: any) => Int8Array;
+    function getVolume(player: any, entity: any): number;
+    function playSound(sound: any, player: any, entity: any): void;
     function getY(game: any, x: any, z: any): number;
 }

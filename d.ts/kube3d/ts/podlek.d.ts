@@ -1,4 +1,5 @@
 /// <reference path="kube3dHelpers.d.ts" />
+/// <reference path="sounds.d.ts" />
 declare module Kube3d {
     class Podlek {
         private model;
@@ -18,6 +19,7 @@ declare module Kube3d {
         private cloud;
         private position;
         private rotation;
+        private player;
         private desiredAngle;
         private turning;
         private noticed;

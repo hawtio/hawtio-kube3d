@@ -1,4 +1,5 @@
 /// <reference path="kube3dHelpers.ts"/>
+/// <reference path="sounds.ts"/>
 
 module Kube3d {
 
@@ -17,6 +18,7 @@ module Kube3d {
     private deathFrameCount = 0;
     private bullet:any = undefined;
     private cloud:any = undefined;
+    private position:any = undefined;
 
     public constructor(private game, private origin, private direction, private owner:string) {
       var mesh = this.createMesh();
@@ -31,6 +33,7 @@ module Kube3d {
       this.entity = game.addItem(item);
       this.name = 'projectile-' + Date.now();
       this.log = Logger.get(this.getName());
+      this.position = this.entity.yaw.position;
     }
 
     public get entity() {
@@ -52,6 +55,7 @@ module Kube3d {
       if (this.cloud) {
         this.cloud.visible = true;
       }
+      playSound(laserHit, this.origin, this);
     }
 
     public hit() {

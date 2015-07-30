@@ -2,4 +2,6 @@
 declare module Kube3d {
     var playerLaser: any;
     var podlekLaser: any;
+    var laserHit: any;
+    var podlekExplosion: any;
 }

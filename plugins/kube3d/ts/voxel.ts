@@ -8,8 +8,8 @@ module Kube3d {
 
   var maxProjectiles = 20;
   var chunkSize = 32;
-  // var generateChunk = perlinTerrain();
-  var generateChunk = flatTerrain();
+  var generateChunk = perlinTerrain();
+  // var generateChunk = flatTerrain();
 
   export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', ($scope, $element, model:Kubernetes.KubernetesModelService) => {
 
@@ -79,12 +79,7 @@ module Kube3d {
           if (!origin.getName) {
             playerLaser.play();
           } else {
-            var distX = Math.abs(target.position.x - origin.position.x);
-            var distY = Math.abs(target.position.z - origin.position.z);
-            var dist = ((distX + distY) / 2) + 1;
-            var volume = 1.0 / (dist * 0.5);
-            var id = podlekLaser.play();
-            podlekLaser.volume(volume, id);
+            playSound(podlekLaser, target, origin);
           }
         });
 
