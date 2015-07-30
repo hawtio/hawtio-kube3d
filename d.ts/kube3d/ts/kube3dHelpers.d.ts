@@ -21,6 +21,8 @@ declare module Kube3d {
     function getParticles(THREE: any, size: any, color: any, amount: any): any;
     function placeObject(cellX: any, cellY: any, isFloor?: boolean): number[];
     function maybe(): boolean;
-    function terrain(seed: any, floor: any, ceiling: any, divisor: any): (position: any, width: any) => Int8Array;
+    function flatTerrain(options?: any): (position: any, width: any) => Int8Array;
+    function cityTerrain(options?: any): void;
+    function perlinTerrain(options?: any): (position: any, width: any) => Int8Array;
     function getY(game: any, x: any, z: any): number;
 }

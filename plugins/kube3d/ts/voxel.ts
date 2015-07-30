@@ -8,7 +8,8 @@ module Kube3d {
 
   var maxProjectiles = 20;
   var chunkSize = 32;
-  var generateChunk = terrain('hawtio', 0, 30, 50);
+  //var generateChunk = perlinTerrain();
+  var generateChunk = flatTerrain();
 
   export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', ($scope, $element, model:Kubernetes.KubernetesModelService) => {
 
@@ -70,7 +71,7 @@ module Kube3d {
           if (!direction) {
             var z = Math.cos(origin.rotation.y);
             var x = Math.sin(origin.rotation.y);
-            var y = game.THREE.Math.degToRad(20);
+            var y = game.THREE.Math.degToRad(10);
             direction = [x, y, z];
           }
           var bolt = new EnergyBolt(game, origin, direction, name);
@@ -93,14 +94,20 @@ module Kube3d {
             $scope.locked = false;
             Core.$apply($scope);
           }
+
+          sky()(delta);
+
+          if (game.pendingChunks.length) {
+            log.debug("Pending chunks, skipping entity creation");
+            return;
+          }
+
           _.forIn(model.podsByKey, (pod, key) => {
             var creature:any = entities[key];
             if (!creature) {
               creature = entities[key] = new Podlek(model, game, key, pod);
             }
           });
-
-          sky()(delta);
 
           // entities
           var entitiesToRemove = [];

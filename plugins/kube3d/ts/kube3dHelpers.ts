@@ -66,23 +66,46 @@ module Kube3d {
     return Math.random() < 0.5;
   }
 
-  export function terrain(seed, floor, ceiling, divisor) {
-    floor = floor || 0;
-    ceiling = ceiling || 20; // minecraft's limit
-    divisor = divisor || 50;
+  export function flatTerrain(options?:any) {
+    return (position, width) => {
+      log.debug("position: ", position);
+      var chunk = new Int8Array(width * width * width);
+      var startX = position[0] * width;
+      var startY = position[1] * width;
+      var startZ = position[2] * width;
+      for (var y = startY; y < startY + width; y++) {
+        for (var x = startX; x < startX + width; x++) {
+          for (var z = startZ; z < startZ + width; z++) {
+            if (position[1] === 0 && y > 0 && y < 5) {
+              setBlock(chunk, x, y, z, width, 1);
+            } else {
+              setBlock(chunk, x, y, z, width, 0);
+            }
+          }
+        }
+      }
+      return chunk;
+    }
+  }
+
+  export function cityTerrain(options?:any) {
+
+  }
+
+  export function perlinTerrain(options?:any) {
+    var seed = options.seed || 'hawtio';
+    var floor = options.floor || 0;
+    var ceiling = options.ceiling || 30;
+    var divisor = options.divisor || 50;
     noise.seed(seed);
     return function generateChunk(position, width) {
       var startX = position[0] * width;
       var startY = position[1] * width;
       var startZ = position[2] * width;
       var chunk = new Int8Array(width * width * width);
-
       pointsInside(startX, startZ, width, function(x, z) {
         var n = noise.simplex2(x / divisor , z / divisor);
         var y = ~~scale(n, -1, 1, floor, ceiling);
-        if (y > ceiling - 1) {
-          log.debug("y>ceiling");
-        }
         if (y === floor || startY < y && y < startY + width) {
           setBlock(chunk, x, y, z, width, 1);
           // fill in underneath too
@@ -100,7 +123,7 @@ module Kube3d {
   export function getY(game, x, z) {
     var y = 1;
     var block = game.getBlock([x, y, z]);
-    while(block || y === 40) {
+    while(block !== 0 && y < 40) {
       y = y + 1;
       block = game.getBlock([x, y, z]);
     }
