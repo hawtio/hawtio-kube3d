@@ -8,8 +8,8 @@ module Kube3d {
 
   var maxProjectiles = 20;
   var chunkSize = 32;
-  //var generateChunk = perlinTerrain();
-  var generateChunk = flatTerrain();
+  var generateChunk = perlinTerrain();
+  // var generateChunk = flatTerrain();
 
   export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', ($scope, $element, model:Kubernetes.KubernetesModelService) => {
 
@@ -97,10 +97,12 @@ module Kube3d {
 
           sky()(delta);
 
+          /*
           if (game.pendingChunks.length) {
             log.debug("Pending chunks, skipping entity creation");
             return;
           }
+          */
 
           _.forIn(model.podsByKey, (pod, key) => {
             var creature:any = entities[key];
@@ -174,7 +176,6 @@ module Kube3d {
       log.debug("Creatures:", entities);
     }
     $scope.$on('kubernetesModelUpdated', updatePods);
-    updatePods(undefined, model);
   }]);
   
 }

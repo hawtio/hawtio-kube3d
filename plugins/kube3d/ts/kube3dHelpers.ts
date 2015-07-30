@@ -66,9 +66,8 @@ module Kube3d {
     return Math.random() < 0.5;
   }
 
-  export function flatTerrain(options?:any) {
+  export function flatTerrain(options:any = {}) {
     return (position, width) => {
-      log.debug("position: ", position);
       var chunk = new Int8Array(width * width * width);
       var startX = position[0] * width;
       var startY = position[1] * width;
@@ -88,11 +87,11 @@ module Kube3d {
     }
   }
 
-  export function cityTerrain(options?:any) {
+  export function cityTerrain(options:any = {}) {
 
   }
 
-  export function perlinTerrain(options?:any) {
+  export function perlinTerrain(options:any = {}) {
     var seed = options.seed || 'hawtio';
     var floor = options.floor || 0;
     var ceiling = options.ceiling || 30;
@@ -103,19 +102,30 @@ module Kube3d {
       var startY = position[1] * width;
       var startZ = position[2] * width;
       var chunk = new Int8Array(width * width * width);
-      pointsInside(startX, startZ, width, function(x, z) {
-        var n = noise.simplex2(x / divisor , z / divisor);
-        var y = ~~scale(n, -1, 1, floor, ceiling);
-        if (y === floor || startY < y && y < startY + width) {
-          setBlock(chunk, x, y, z, width, 1);
-          // fill in underneath too
-          if (y > 0) {
-            for (y = y - 1; y > 0; y--) {
-              setBlock(chunk, x, y, z, width, 2);
+      if (position[1] === 0) {
+        pointsInside(startX, startZ, width, function(x, z) {
+          var n = noise.simplex2(x / divisor , z / divisor);
+          var y = ~~scale(n, -1, 1, floor, ceiling);
+          if (y === floor || startY < y && y < startY + width) {
+            setBlock(chunk, x, y, z, width, 1);
+            // fill in underneath too
+            if (y > 0) {
+              for (y = y - 1; y > 0; y--) {
+                setBlock(chunk, x, y, z, width, 2);
+              }
+            }
+          }
+        });
+      } else {
+        for (var y = startY; y < startY + width; y++) {
+          for (var x = startX; x < startX + width; x++) {
+            for (var z = startZ; z < startZ + width; z++) {
+              setBlock(chunk, x, y, z, width, 0);
             }
           }
         }
-      });
+
+      }
       return chunk;
     }
   }
