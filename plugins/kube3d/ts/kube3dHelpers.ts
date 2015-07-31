@@ -95,8 +95,10 @@ module Kube3d {
 
   export function cityTerrain(options:any = {}) {
     var seed = options.seed || 'hawtio';
-    var floor = options.floor || 5;
-    var ceiling = options.ceiling || 30;
+    var floor = options.floor || 10;
+    var ceiling = options.ceiling || 35;
+    var minWidth = options.minWidth || 1;
+    var maxWidth = options.maxWidth || 10;
     var divisor = options.divisor || 50;
     var noise = perlin.noise;
     noise.seed(seed);
@@ -112,23 +114,26 @@ module Kube3d {
       var y = startZ + width / 2;
       var n = noise.simplex2(x, y);
       var max = ~~scale(n, -1, 1, floor, ceiling);
-      //var max = Math.random() * 30 + 10;
-      var buildingSize = Math.random() * 10 + 1;
+      var buildingSize = ~~scale(n, -1, 1, minWidth, maxWidth);
       var top = 5;
       blockIterator(startX, startY, startZ, width, (x, y, z, width) => {
+        var blockValue = 0;
         if (x < startX + buildingSize || 
             x > endX - buildingSize || 
             z < startZ + buildingSize || 
             z > endZ - buildingSize) {
           top = 5;
+          blockValue = 1;
         } else {
           top = max;
+          blockValue = 3;
         }
         if (position[1] === 0 && y > 0 && y < top) {
-          setBlock(chunk, x, y, z, width, 1);
+          //blockValue = 1;
         } else {
-          setBlock(chunk, x, y, z, width, 0);
+          blockValue = 0;
         }
+        setBlock(chunk, x, y, z, width, blockValue);
       });
       return chunk;
     }
