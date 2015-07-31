@@ -94,7 +94,34 @@ module Kube3d {
   }
 
   export function cityTerrain(options:any = {}) {
-
+    return (position, width) => {
+      var chunk = new Int8Array(width * width * width);
+      var startX = position[0] * width;
+      var startY = position[1] * width;
+      var startZ = position[2] * width;
+      var endX = startX + width;
+      var endY = startY + width;
+      var endZ = startZ + width;
+      var max = Math.random() * 30 + 10;
+      var buildingSize = Math.random() * 10 + 1;
+      var top = 5;
+      blockIterator(startX, startY, startZ, width, (x, y, z, width) => {
+        if (x < startX + buildingSize || 
+            x > endX - buildingSize || 
+            z < startZ + buildingSize || 
+            z > endZ - buildingSize) {
+          top = 5;
+        } else {
+          top = max;
+        }
+        if (position[1] === 0 && y > 0 && y < top) {
+          setBlock(chunk, x, y, z, width, 1);
+        } else {
+          setBlock(chunk, x, y, z, width, 0);
+        }
+      });
+      return chunk;
+    }
   }
 
   function blockIterator(startX, startY, startZ, width, func) {

@@ -23,7 +23,7 @@ declare module Kube3d {
     function maybe(): boolean;
     function lessMaybe(): boolean;
     function flatTerrain(options?: any): (position: any, width: any) => Int8Array;
-    function cityTerrain(options?: any): void;
+    function cityTerrain(options?: any): (position: any, width: any) => Int8Array;
     function perlinTerrain(options?: any): (position: any, width: any) => Int8Array;
     function getVolume(player: any, entity: any): number;
     function playSound(sound: any, player: any, entity: any): void;

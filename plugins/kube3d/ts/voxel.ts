@@ -9,7 +9,8 @@ module Kube3d {
   var maxProjectiles = 20;
   var chunkSize = 32;
 
-  var generateChunk = perlinTerrain();
+  // var generateChunk = perlinTerrain();
+  var generateChunk = cityTerrain();
 
   // good for debugging
   // var generateChunk = flatTerrain();
