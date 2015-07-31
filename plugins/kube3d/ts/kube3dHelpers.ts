@@ -66,14 +66,24 @@ module Kube3d {
     return Math.random() < 0.5;
   }
 
+  export function lessMaybe() {
+    return Math.random() < 0.25;
+  }
+
   export function flatTerrain(options:any = {}) {
     return (position, width) => {
       var chunk = new Int8Array(width * width * width);
       var startX = position[0] * width;
       var startY = position[1] * width;
       var startZ = position[2] * width;
+      var max = 5;
       blockIterator(startX, startY, startZ, width, (x, y, z, width) => {
-        if (position[1] === 0 && y > 0 && y < 5) {
+        if (x % 4 === 0 && z % 4 === 0) {
+          max = 6;
+        } else {
+          max = 5;
+        }
+        if (position[1] === 0 && y > 0 && y < max) {
           setBlock(chunk, x, y, z, width, 1);
         } else {
           setBlock(chunk, x, y, z, width, 0);

@@ -29,6 +29,7 @@ module Kube3d {
     private turning = false;
     private noticed = false;
     private cooldown = 0;
+    private actions = <Array<Function>>[];
 
     public constructor(private model, private game, private _name:string, private _pod:any) {
       this.log = Logger.get('podlek-' + _name);
@@ -122,14 +123,13 @@ module Kube3d {
         return;
       }
       this.entity.velocity.z = amount;
-
       var angle = this.rotation.y;
-      var pt = this.position.clone();
-      pt.y = this.position.y;
-      pt.x += this.game.cubeSize / 2 * Math.sin(angle);
-      pt.z += this.game.cubeSize / 2 * Math.cos(angle);
+      var pt = [Math.floor(this.position.x), Math.floor(this.position.y), Math.floor(this.position.z)];
+      var mid = this.game.cubeSize;
+      pt[0] = pt[0] + Math.round(mid * Math.sin(angle));
+      pt[2] = pt[2] + Math.round(mid * Math.cos(angle));
       var block = this.game.getBlock(pt);
-      if (block !== false) {
+      if (block) {
         this.game.setTimeout(() => { 
           this.jump();
           this.game.setTimeout(() => {
@@ -160,13 +160,19 @@ module Kube3d {
       } else {
         var angle = this.desiredAngle.toPrecision(2);
         if (this.turning && this.rotation.y < angle) {
-          this.rotation.y += 0.01;
+          this.rotation.y += (this.noticed ? 0.05 : 0.01);
         } else if (this.turning && this.rotation.y > angle) {
-          this.rotation.y -= 0.01;
+          this.rotation.y -= (this.noticed ? 0.05 : 0.01);
         } else {
           this.turning = false;
         }
-        if (this.noticed && this.cooldown < 0 && maybe()) {
+        if (this.actions.length > 0) {
+          var action = this.actions.shift();
+          if (action) {
+            action();
+          }
+        }
+        if (this.noticed && this.cooldown < 0 && lessMaybe()) {
           this.game.emit('fire', this);
           this.cooldown = laserCooldownTime;
         } else if (this.noticed) {
@@ -234,7 +240,7 @@ module Kube3d {
       // find the right height to spawn at;
       var y = getY(game, x, z);
       if (y === null) {
-        log.debug("Not spawning, world isn't ready yet");
+        this.log.debug("Not spawning, world isn't ready yet");
         return;
       }
       this.player = player;
@@ -260,7 +266,11 @@ module Kube3d {
           this.desiredAngle += Math.random() * HalfPI - QuarterPI;
           this.turning = true;
         }
-        this.forward();
+        var numActions = Math.random() * 20;
+        numActions = numActions + (this.noticed ? 10 : 0);
+        for (; numActions > 0; numActions --) {
+          this.actions.push(angular.bind(this, this.forward));
+        }
         this.clearInterval = this.game.setTimeout(walkAround, Math.random() * 1000 + 500);
       }
       this.notice(player, 20);

@@ -24,6 +24,7 @@ declare module Kube3d {
         private turning;
         private noticed;
         private cooldown;
+        private actions;
         constructor(model: any, game: any, _name: string, _pod: any);
         getName(): string;
         private createMesh();
