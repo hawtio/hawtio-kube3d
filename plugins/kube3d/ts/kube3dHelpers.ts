@@ -3,7 +3,7 @@
 
 declare var THREE; // = require('threejs-build');
 var createGame = require('voxel-hello-world');
-var noise = require('perlin').noise;
+var perlin = require('perlin');
 var walk = require('voxel-walk');
 var player = require('voxel-player');
 var createSky = require('voxel-sky');
@@ -94,6 +94,12 @@ module Kube3d {
   }
 
   export function cityTerrain(options:any = {}) {
+    var seed = options.seed || 'hawtio';
+    var floor = options.floor || 5;
+    var ceiling = options.ceiling || 30;
+    var divisor = options.divisor || 50;
+    var noise = perlin.noise;
+    noise.seed(seed);
     return (position, width) => {
       var chunk = new Int8Array(width * width * width);
       var startX = position[0] * width;
@@ -102,7 +108,11 @@ module Kube3d {
       var endX = startX + width;
       var endY = startY + width;
       var endZ = startZ + width;
-      var max = Math.random() * 30 + 10;
+      var x = startX + width / 2;
+      var y = startZ + width / 2;
+      var n = noise.simplex2(x, y);
+      var max = ~~scale(n, -1, 1, floor, ceiling);
+      //var max = Math.random() * 30 + 10;
       var buildingSize = Math.random() * 10 + 1;
       var top = 5;
       blockIterator(startX, startY, startZ, width, (x, y, z, width) => {
@@ -139,6 +149,7 @@ module Kube3d {
     var floor = options.floor || 0;
     var ceiling = options.ceiling || 30;
     var divisor = options.divisor || 50;
+    var noise = perlin.noise;
     noise.seed(seed);
     return function generateChunk(position, width) {
       var startX = position[0] * width;
