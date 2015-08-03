@@ -115,18 +115,42 @@ module Kube3d {
       var n = noise.simplex2(x, y);
       var max = ~~scale(n, -1, 1, floor, ceiling);
       var buildingSize = ~~scale(n, -1, 1, minWidth, maxWidth);
+      var windowFrequency = (n < 0.5) ? 2 : 4;
+      if (max % windowFrequency !== 0) {
+        max = max + 1;
+      }
+      while (buildingSize % windowFrequency !== 0) {
+        buildingSize = buildingSize + 1;
+      }
+      var buildingMaterial = ~~scale(n, -1, 1, 3, 6);
       var top = 5;
       blockIterator(startX, startY, startZ, width, (x, y, z, width) => {
         var blockValue = 0;
-        if (x < startX + buildingSize || 
-            x > endX - buildingSize || 
-            z < startZ + buildingSize || 
-            z > endZ - buildingSize) {
+        var minX = startX + buildingSize;
+        var maxX = endX - buildingSize;
+        var minZ = startZ + buildingSize;
+        var maxZ = endZ - buildingSize;
+        if (x < minX || 
+            x > maxX || 
+            z < minZ || 
+            z > maxZ) {
           top = 5;
-          blockValue = 1;
+          blockValue = 6;
+        if (x < minX - 1 || 
+            x > maxX + 1 || 
+            z < minZ - 1 || 
+            z > maxZ + 1) {
+            blockValue = 1;
+          }
         } else {
           top = max;
-          blockValue = 3;
+          if (x % windowFrequency === 0 && 
+              y % windowFrequency === 0 && 
+              z %  windowFrequency === 0) {
+            blockValue = 7;
+          } else {
+            blockValue = buildingMaterial;
+          }
         }
         if (position[1] === 0 && y > 0 && y < top) {
           //blockValue = 1;

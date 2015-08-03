@@ -31,7 +31,7 @@ module Kube3d {
         fogDisabled: false,
         generateChunks: false,
         texturePath: 'resources/textures/',
-        materials: [['grass', 'dirt', 'grass_dirt'], 'dirt', 'brick'],
+        materials: [['grass', 'dirt', 'grass_dirt'], 'dirt', 'brick', 'Building1', 'Building2', 'Sidewalk', 'Window'],
         materialFlatColor: false,
         container: el
       }, (game, avatar) => {
