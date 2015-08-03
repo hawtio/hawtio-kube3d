@@ -116,6 +116,9 @@ module Kube3d {
       }
       // this.log.debug("Jumping!");
       this.entity.velocity.y = amount;
+      this.game.setTimeout(() => {
+        this.entity.velocity.z = 0.017;
+      }, 100);
     }
 
     public forward(amount = 0.025) {
@@ -130,12 +133,20 @@ module Kube3d {
       pt[2] = pt[2] + Math.round(mid * Math.cos(angle));
       var block = this.game.getBlock(pt);
       if (block) {
-        this.game.setTimeout(() => { 
-          this.jump();
-          this.game.setTimeout(() => {
-            this.entity.velocity.z = 0.017;
-          }, 100);
-        }, 500);
+        if (lessMaybe()) {
+          this.game.setTimeout(() => { 
+            this.jump();
+          }, 500);
+        } else {
+          var amount = Math.random();
+          do {
+            angle = angle + amount;
+            pt[0] = pt[0] + Math.round(mid * Math.sin(angle));
+            pt[2] = pt[2] + Math.round(mid * Math.cos(angle));
+          }
+          while(this.game.getBlock(pt));
+          this.desiredAngle = angle;
+        }
       }
     }
 
