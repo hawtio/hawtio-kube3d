@@ -6,6 +6,7 @@ declare module Kube3d {
         private game;
         private _name;
         private _pod;
+        private $scope;
         private playerHit;
         private dead;
         private dying;
@@ -25,7 +26,7 @@ declare module Kube3d {
         private noticed;
         private cooldown;
         private actions;
-        constructor(model: any, game: any, _name: string, _pod: any);
+        constructor(model: any, game: any, _name: string, _pod: any, $scope: any);
         getName(): string;
         private createMesh();
         destroy(): void;

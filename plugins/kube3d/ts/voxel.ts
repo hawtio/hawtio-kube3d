@@ -18,6 +18,8 @@ module Kube3d {
   export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', ($scope, $element, model:Kubernetes.KubernetesModelService) => {
 
     $scope.locked = true;
+    $scope.playerDeaths = 0;
+    $scope.score = 0;
 
     var entities = {};
 
@@ -38,7 +40,7 @@ module Kube3d {
 
         var target = game.controls.target();
 
-        var player = new Player(game, avatar, target);
+        var player = $scope.player = new Player(game, avatar, target, $scope);
         entities[player.getName()] = player;
 
         var sky = createSky({
@@ -67,6 +69,12 @@ module Kube3d {
         var currentMaterial = 1;
 
         game.on('fire', function (origin, state) {
+          if (!origin.getName) {
+            if (player.isDead()) {
+              player.respawn();
+              return;
+            }
+          }
           if (projectileCount() > maxProjectiles) {
             return;
           }
@@ -106,7 +114,7 @@ module Kube3d {
           _.forIn(model.podsByKey, (pod, key) => {
             var creature:any = entities[key];
             if (!creature) {
-              creature = entities[key] = new Podlek(model, game, key, pod);
+              creature = entities[key] = new Podlek(model, game, key, pod, $scope);
             }
           });
 
@@ -167,7 +175,7 @@ module Kube3d {
       _.forIn(model.podsByKey, (pod, key) => {
         var creature:any = entities[key];
         if (!creature) {
-          creature = entities[key] = new Podlek(model, game, key, pod);
+          creature = entities[key] = new Podlek(model, game, key, pod, $scope);
         } else {
           creature.pod = pod;
         }

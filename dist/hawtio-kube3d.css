@@ -12,11 +12,36 @@
   height: 100%;
 }
 
-.kube3d-instructions-wrapper {
+.no-click {
   pointer-events: none;
+}
+
+.death-overlay {
+  position: fixed !important;
+  position: absolute;
+  background-color: #ff3333;
+  top: 70px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  opacity: 0.8;
+}
+
+.death-title {
+  font-size: 32px;
+  color: white;
+}
+
+.death-info {
+  font-size: 24px;
+  color: white;
+}
+
+.kube3d-instructions-wrapper {
   opacity: 1.0;
   position: absolute;
-  top: 50%;
+  top: 45%;
   width: 100%;
   text-align: center;
 }

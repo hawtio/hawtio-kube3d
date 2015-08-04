@@ -1,4 +1,5 @@
 /// <reference path="kube3dHelpers.d.ts" />
+/// <reference path="sounds.d.ts" />
 declare module Kube3d {
     var deathFrames: number;
     var maxHealth: number;
@@ -6,16 +7,21 @@ declare module Kube3d {
         private game;
         private avatar;
         private target;
+        private $scope;
         private log;
         private health;
         private dead;
         private targetTick;
-        constructor(game: any, avatar: any, target: any);
+        private spawned;
+        constructor(game: any, avatar: any, target: any, $scope: any);
+        isDead(): boolean;
+        respawn(): void;
         getName(): string;
         entity: any;
         needsSpawning(): boolean;
         shouldDie(): boolean;
         die(): void;
+        spawn(self: any): void;
         hit(): void;
         tick(delta: any): void;
         checkCollisions(entities: any): void;

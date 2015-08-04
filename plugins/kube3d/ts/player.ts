@@ -1,4 +1,5 @@
 /// <reference path="kube3dHelpers.ts"/>
+/// <reference path="sounds.ts"/>
 
 module Kube3d {
 
@@ -11,20 +12,20 @@ module Kube3d {
     private health = maxHealth;
     private dead = false;
     private targetTick = undefined;
+    private spawned = false;
 
-    constructor(private game, private avatar, private target) {
+    constructor(private game, private avatar, private target, private $scope) {
       log.debug("target: ", target);
       log.debug("target.tick: ", target.tick);
       log.debug("avatar: ", avatar);
-      /*
-      this.targetTick = angular.bind(this.target, this.target.tick);
-      this.target.tick = (delta) => {
-        if (!this.dead) {
-          this.targetTick(delta);
-        }
-        this.tickInternal(delta);
-      };
-      */
+    }
+
+    public isDead() {
+      return this.dead;
+    }
+
+    public respawn() {
+      this.spawned = false;
     }
 
     public getName() {
@@ -36,7 +37,7 @@ module Kube3d {
     }
 
     public needsSpawning() {
-      return false;
+      return !this.spawned;
     }
 
     public shouldDie() {
@@ -46,6 +47,29 @@ module Kube3d {
     public die() {
       this.log.debug("I died!");
       this.dead = true;
+      this.game.interact.release();
+      this.$scope.playerDeaths = this.$scope.playerDeaths + 1;
+      Core.$apply(this.$scope);
+      playerExplosion.play();
+    }
+
+    public spawn(self) {
+      var x, y, z;
+      do {
+        x = Math.random() * 50 - 25;
+        z = Math.random() * 50 - 25;
+        y = getY(this.game, x, z);
+        if (y === null) {
+          return;
+        }
+      } while (y > 7)
+      this.target.position.x = x;
+      this.target.position.y = y;
+      this.target.position.z = z;
+      this.dead = false;
+      this.health = maxHealth;
+      this.spawned = true;
+      Core.$apply(this.$scope);
     }
 
     public hit() {
@@ -54,14 +78,12 @@ module Kube3d {
     }
 
     public tick(delta) {
-      /*
       if (this.dead) {
         return;
       }
       if (this.health <= 0) {
         this.die();
       }
-      */
       //this.targetTick(delta);
       var target = this.target;
       walk.render(target.playerSkin);

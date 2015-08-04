@@ -31,7 +31,7 @@ module Kube3d {
     private cooldown = 0;
     private actions = <Array<Function>>[];
 
-    public constructor(private model, private game, private _name:string, private _pod:any) {
+    public constructor(private model, private game, private _name:string, private _pod:any, private $scope) {
       this.log = Logger.get('podlek-' + _name);
     }
 
@@ -219,6 +219,10 @@ module Kube3d {
         return;
       }
       this.log.debug("I'm dying!");
+      if (playerHit && !this.dying) {
+        this.$scope.score = this.$scope.score + 1;
+        Core.$apply(this.$scope);
+      }
       this.dying = true;
       if (this.playerHit && !this.deleteCalled) {
         this.log.debug("Deleting resource");

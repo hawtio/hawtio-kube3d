@@ -1,6 +1,13 @@
 <div class="kube3d-viewport" ng-controller="Kube3d.VoxelController">
   <div class="kube3d-control"></div>
-  <div class="kube3d-instructions-wrapper" ng-show="locked">
+  <div class="death-overlay" ng-show="player.isDead()" ng-click="player.respawn()">
+    <div class="kube3d-instructions-wrapper">
+      <p class="death-title">You died!  Click to respawn...</p>
+      <p class="death-info">Deaths: {{playerDeaths}}</p>
+      <p class="death-info">Pods Destroyed: {{score}}</p>
+    </div>
+  </div>
+  <div class="kube3d-instructions-wrapper no-click" ng-show="locked">
     <span class="kube3d-start-title">Click to play</span>
   </div>
 </div>
