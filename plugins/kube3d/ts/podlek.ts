@@ -122,10 +122,9 @@ module Kube3d {
     }
 
     public forward(amount = 0.025) {
-      if (this._entity.velocity.y !== 0) {
+      if (this.entity.velocity.y !== 0) {
         return;
       }
-      this.entity.velocity.z = amount;
       var angle = this.rotation.y;
       var pt = [Math.floor(this.position.x), Math.floor(this.position.y), Math.floor(this.position.z)];
       var mid = this.game.cubeSize;
@@ -138,7 +137,7 @@ module Kube3d {
             this.jump();
           }, 500);
         } else {
-          var amount = Math.random();
+          var amount = maybe() ? HalfPI : HalfPI;
           do {
             angle = angle + amount;
             pt[0] = pt[0] + Math.round(mid * Math.sin(angle));
@@ -147,6 +146,8 @@ module Kube3d {
           while(this.game.getBlock(pt));
           this.desiredAngle = angle;
         }
+      } else {
+        this.entity.velocity.z = amount;
       }
     }
 
@@ -286,7 +287,7 @@ module Kube3d {
         for (; numActions > 0; numActions --) {
           this.actions.push(angular.bind(this, this.forward));
         }
-        this.clearInterval = this.game.setTimeout(walkAround, Math.random() * 1000 + 500);
+        this.clearInterval = this.game.setTimeout(walkAround, Math.random() * 2000);
       }
       this.notice(player, 20);
       walkAround();

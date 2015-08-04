@@ -16,16 +16,43 @@
   pointer-events: none;
 }
 
-.death-overlay {
+.player-score {
   position: fixed !important;
   position: absolute;
-  background-color: #ff3333;
+  right: 10px;
+  bottom: 10px;
+  font-size: 24px;
+  color: white;
+}
+
+.overlay {
+  position: fixed !important;
+  position: absolute;
   top: 70px;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 300;
+  /*z-index: 300; */
+}
+
+.spawn {
+  pointer-events: none;
+  background-color: white;
+  opacity: 1.0;
+  transition: 0.5s linear all;
+}
+
+.spawn.ng-hide {
+  opacity: 0.0;
+}
+
+.death {
+  background-color: #ff3333;
   opacity: 0.8;
+}
+
+.death-overlay {
+
 }
 
 .death-title {

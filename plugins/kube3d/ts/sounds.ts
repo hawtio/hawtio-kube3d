@@ -26,4 +26,9 @@ module Kube3d {
     urls: ['resources/sounds/player_explosion.ogg'],
     loop: false
   });
+
+  export var playerSpawn = new Howl({
+    urls: ['resources/sounds/player_spawn.ogg'],
+    loop: false
+  });
 }

@@ -13,11 +13,14 @@ module Kube3d {
     private dead = false;
     private targetTick = undefined;
     private spawned = false;
+    private spawning = false;
 
     constructor(private game, private avatar, private target, private $scope) {
       log.debug("target: ", target);
       log.debug("target.tick: ", target.tick);
       log.debug("avatar: ", avatar);
+      this.spawning = true;
+      Core.$apply($scope);
     }
 
     public isDead() {
@@ -26,6 +29,8 @@ module Kube3d {
 
     public respawn() {
       this.spawned = false;
+      this.spawning = true;
+      Core.$apply(this.$scope);
     }
 
     public getName() {
@@ -38,6 +43,10 @@ module Kube3d {
 
     public needsSpawning() {
       return !this.spawned;
+    }
+
+    public isSpawning() {
+      return this.spawning;
     }
 
     public shouldDie() {
@@ -69,6 +78,11 @@ module Kube3d {
       this.dead = false;
       this.health = maxHealth;
       this.spawned = true;
+      this.game.setTimeout(() => {
+        this.spawning = false;
+        Core.$apply(this.$scope);
+      }, 500);
+      playerSpawn.play();
       Core.$apply(this.$scope);
     }
 

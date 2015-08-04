@@ -13,12 +13,14 @@ declare module Kube3d {
         private dead;
         private targetTick;
         private spawned;
+        private spawning;
         constructor(game: any, avatar: any, target: any, $scope: any);
         isDead(): boolean;
         respawn(): void;
         getName(): string;
         entity: any;
         needsSpawning(): boolean;
+        isSpawning(): boolean;
         shouldDie(): boolean;
         die(): void;
         spawn(self: any): void;
