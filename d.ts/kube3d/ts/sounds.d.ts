@@ -6,4 +6,5 @@ declare module Kube3d {
     var podlekExplosion: any;
     var playerExplosion: any;
     var playerSpawn: any;
+    var tracks: any[];
 }

@@ -23,6 +23,8 @@ module Kube3d {
 
     var entities = {};
 
+    var currentTrack:any = undefined;
+
     function projectileCount() {
       return _.filter(_.keys(entities), (key) => _.startsWith('projectile-', key)).length;
     }
@@ -102,6 +104,18 @@ module Kube3d {
             Core.$apply($scope);
           }
 
+          if (currentTrack !== undefined && player.isDead()) {
+            currentTrack.stop();
+            currentTrack = undefined;
+          }
+          if (currentTrack === undefined && !player.isDead()) {
+            currentTrack = tracks[_.random(tracks.length - 1)];
+            currentTrack.on('end', () => {
+              currentTrack = undefined;
+            });
+            currentTrack.play();
+          }
+
           sky()(delta);
 
           /*
@@ -163,6 +177,9 @@ module Kube3d {
       if (game) {
         game.destroy();
         delete game;
+      }
+      if (currentTrack) {
+        currentTrack.stop();
       }
     }
 
