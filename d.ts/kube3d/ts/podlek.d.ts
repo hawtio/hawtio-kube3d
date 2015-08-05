@@ -42,6 +42,7 @@ declare module Kube3d {
         hit(): void;
         die(playerHit?: boolean): void;
         spawn(player: any): void;
+        turn(): void;
         needsSpawning(): boolean;
         name: string;
         pod: any;

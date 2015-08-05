@@ -132,14 +132,15 @@ module Kube3d {
       pt[2] = pt[2] + Math.round(mid * Math.cos(angle));
       var block = this.game.getBlock(pt);
       if (block) {
+        this.actions.length = 0;
         if (lessMaybe()) {
-          this.game.setTimeout(() => { 
-            this.jump();
-          }, 500);
+          this.actions.push(angular.bind(this, this.jump));
         } else {
-          var amount = maybe() ? HalfPI : HalfPI;
-          angle = angle + amount;
-          this.desiredAngle = angle;
+          this.actions.push(angular.bind(this, () => {
+            var amount = maybe() ? Math.PI : -1 * Math.PI;
+            angle = angle + amount;
+            this.desiredAngle = angle;
+          }));
         }
       } else {
         this.entity.velocity.z = amount;
@@ -274,18 +275,37 @@ module Kube3d {
         if (this.dying || this.dead || !this.entity) {
           return;
         }
-        if (!this.noticed && maybe()) {
-          this.desiredAngle += Math.random() * HalfPI - QuarterPI;
-        }
-        var numActions = Math.random() * 20;
-        numActions = numActions + (this.noticed ? 10 : 0);
-        for (; numActions > 0; numActions --) {
-          this.actions.push(angular.bind(this, this.forward));
+        if (this.actions.length === 0) {
+          var numActions = Math.random() * 20;
+          numActions = numActions + (this.noticed ? 10 : 0);
+          for (; numActions > 0; numActions --) {
+            switch(_.random(0, 10)) {
+              case 2:
+              case 3:
+              case 8:
+              case 9:
+                this.actions.push(angular.bind(this, this.turn));
+                break;
+              case 5:
+              case 6:
+                this.actions.push(angular.bind(this, this.jump));
+                break;
+              default:
+                this.actions.push(angular.bind(this, this.forward));
+                break;
+            }
+          }
         }
         this.clearInterval = this.game.setTimeout(walkAround, Math.random() * 2000);
       }
       this.notice(player, 20);
       walkAround();
+    }
+
+    public turn() {
+      if (maybe()) {
+        this.desiredAngle += Math.random() * HalfPI - QuarterPI;
+      }
     }
 
     public needsSpawning() {
