@@ -110,8 +110,9 @@ module Kube3d {
       var endX = startX + width;
       var endY = startY + width;
       var endZ = startZ + width;
-      var x = startX + width / 2;
-      var y = startZ + width / 2;
+      var halfWidth = width / 2;
+      var x = startX + halfWidth;
+      var y = startZ + halfWidth;
       var n = noise.simplex2(x, y);
       var max = ~~scale(n, -1, 1, floor, ceiling);
       var buildingSize = ~~scale(n, -1, 1, minWidth, maxWidth);
@@ -124,22 +125,29 @@ module Kube3d {
       }
       var buildingMaterial = ~~scale(n, -1, 1, 3, 6);
       var top = 5;
+      if (position[1] !== 0) {
+        return chunk;
+      }
+      var minX = startX + buildingSize;
+      var maxX = endX - buildingSize;
+      var minZ = startZ + buildingSize;
+      var maxZ = endZ - buildingSize;
+      var minXSidewalk = minX - 1;
+      var maxXSidewalk = maxX + 1;
+      var minZSidewalk = minZ - 1;
+      var maxZSidewalk = maxZ + 1;
       blockIterator(startX, startY, startZ, width, (x, y, z, width) => {
         var blockValue = 0;
-        var minX = startX + buildingSize;
-        var maxX = endX - buildingSize;
-        var minZ = startZ + buildingSize;
-        var maxZ = endZ - buildingSize;
         if (x < minX || 
             x > maxX || 
             z < minZ || 
             z > maxZ) {
           top = 5;
           blockValue = 6;
-        if (x < minX - 1 || 
-            x > maxX + 1 || 
-            z < minZ - 1 || 
-            z > maxZ + 1) {
+        if (x < minXSidewalk || 
+            x > maxXSidewalk || 
+            z < minZSidewalk || 
+            z > maxZSidewalk) {
             blockValue = 1;
           }
         } else {
@@ -152,10 +160,8 @@ module Kube3d {
             blockValue = buildingMaterial;
           }
         }
-        if (position[1] === 0 && y > 0 && y < top) {
-          //blockValue = 1;
-        } else {
-          blockValue = 0;
+        if ( y < 0 || y > top) {
+          return;
         }
         setBlock(chunk, x, y, z, width, blockValue);
       });

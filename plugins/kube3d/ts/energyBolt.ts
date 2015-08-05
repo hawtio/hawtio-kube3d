@@ -6,6 +6,10 @@ module Kube3d {
   var deathFrames = 0.5 * 60;
   var maxHealth = 1;
 
+  function randomColor() {
+    return "#FF0000".replace(/0/g,function(){return (~~(Math.random() * 6 + 2)).toString(16);});
+  }
+
   export class EnergyBolt {
 
     private name:string = undefined;
@@ -148,17 +152,15 @@ module Kube3d {
       var game = this.game;
       var THREE = game.THREE;
       var answer = new THREE.Object3D();
+      var color = randomColor();
       var bullet = new game.THREE.Mesh(new game.THREE.SphereGeometry(0.125, 8, 8), new game.THREE.MeshBasicMaterial({
-        color: 0xff0000
+        color: color
       }));
-      var cloud = getParticles(THREE, 0.125, 0xff0000, 100);
+      var cloud = getParticles(THREE, 0.125, color, 100);
       bullet.visible = true;
       cloud.visible = false;
       this.bullet = bullet;
       this.cloud = cloud;
-      var light = new THREE.PointLight(0xff0000, 0,5, 0);
-      bullet.position.y = cloud.position.y = light.position.y = 0.7;
-      answer.add(light);
       answer.add(bullet);
       answer.add(cloud);
       return answer;

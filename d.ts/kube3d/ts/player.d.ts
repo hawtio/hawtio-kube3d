@@ -14,6 +14,7 @@ declare module Kube3d {
         private targetTick;
         private spawned;
         private spawning;
+        private spawnClicked;
         constructor(game: any, avatar: any, target: any, $scope: any);
         isDead(): boolean;
         respawn(): void;

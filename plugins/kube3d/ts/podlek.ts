@@ -138,12 +138,7 @@ module Kube3d {
           }, 500);
         } else {
           var amount = maybe() ? HalfPI : HalfPI;
-          do {
-            angle = angle + amount;
-            pt[0] = pt[0] + Math.round(mid * Math.sin(angle));
-            pt[2] = pt[2] + Math.round(mid * Math.cos(angle));
-          }
-          while(this.game.getBlock(pt));
+          angle = angle + amount;
           this.desiredAngle = angle;
         }
       } else {
@@ -171,12 +166,11 @@ module Kube3d {
         }
       } else {
         var angle = this.desiredAngle.toPrecision(2);
-        if (this.turning && this.rotation.y < angle) {
-          this.rotation.y += (this.noticed ? 0.05 : 0.01);
-        } else if (this.turning && this.rotation.y > angle) {
-          this.rotation.y -= (this.noticed ? 0.05 : 0.01);
-        } else {
-          this.turning = false;
+        var amount = (this.noticed ? 0.05 : 0.01);
+        if (this.rotation.y < angle) {
+          this.rotation.y += amount
+        } else if (this.rotation.y > angle) {
+          this.rotation.y -= amount
         }
         if (this.actions.length > 0) {
           var action = this.actions.shift();
@@ -280,7 +274,6 @@ module Kube3d {
         }
         if (!this.noticed && maybe()) {
           this.desiredAngle += Math.random() * HalfPI - QuarterPI;
-          this.turning = true;
         }
         var numActions = Math.random() * 20;
         numActions = numActions + (this.noticed ? 10 : 0);

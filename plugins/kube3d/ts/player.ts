@@ -14,6 +14,7 @@ module Kube3d {
     private targetTick = undefined;
     private spawned = false;
     private spawning = false;
+    private spawnClicked = false;
 
     constructor(private game, private avatar, private target, private $scope) {
       log.debug("target: ", target);
@@ -28,9 +29,15 @@ module Kube3d {
     }
 
     public respawn() {
-      this.spawned = false;
-      this.spawning = true;
-      Core.$apply(this.$scope);
+      if (!this.spawnClicked) {
+        this.spawnClicked = true;
+        this.game.setTimeout(() => {
+          this.spawnClicked = false;
+          this.spawned = false;
+          this.spawning = true;
+          Core.$apply(this.$scope);
+        }, 1000);
+      }
     }
 
     public getName() {

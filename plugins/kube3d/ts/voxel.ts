@@ -71,12 +71,14 @@ module Kube3d {
         var currentMaterial = 1;
 
         game.on('fire', function (origin, state) {
+          /*
           if (!origin.getName) {
             if (player.isDead()) {
               player.respawn();
               return;
             }
           }
+          */
           if (projectileCount() > maxProjectiles) {
             return;
           }
