@@ -221,7 +221,9 @@ module Kube3d {
       this.dying = true;
       if (this.playerHit && !this.deleteCalled) {
         this.log.debug("Deleting resource");
-        this.model['podsResource'].delete({ id: Kubernetes.getName(this.pod) });
+        if (settings.destroyPods) {
+          this.model['podsResource'].delete({ id: Kubernetes.getName(this.pod) });
+        }
         this.deleteCalled = true;
       }
       if (this.clearInterval) {

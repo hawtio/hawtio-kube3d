@@ -7,4 +7,5 @@
 /// <reference path="d.ts/kube3d/ts/lockRequest.d.ts"/>
 /// <reference path="d.ts/kube3d/ts/player.d.ts"/>
 /// <reference path="d.ts/kube3d/ts/podlek.d.ts"/>
+/// <reference path="d.ts/kube3d/ts/preferences.d.ts"/>
 /// <reference path="d.ts/kube3d/ts/voxel.d.ts"/>

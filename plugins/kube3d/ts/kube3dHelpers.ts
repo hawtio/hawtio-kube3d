@@ -16,6 +16,10 @@ module Kube3d {
   export var templatePath = 'plugins/kube3d/html';
   export var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
+  export var settings = {
+    destroyPods: Core.parseBooleanValue(localStorage['Kube3d.destroyPods']),
+    music: localStorage['Kube3d.music'] === undefined ? true : Core.parseBooleanValue(localStorage['Kube3d.music'])
+  }
 
   export var HalfPI = Math.PI / 2;
   export var QuarterPI = Math.PI / 4;

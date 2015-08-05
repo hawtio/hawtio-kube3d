@@ -13,6 +13,10 @@ declare module Kube3d {
     var log: Logging.Logger;
     var templatePath: string;
     var havePointerLock: boolean;
+    var settings: {
+        destroyPods: boolean;
+        music: boolean;
+    };
     var HalfPI: number;
     var QuarterPI: number;
     function rgbToHex(r: any, g: any, b: any): string;

@@ -10,7 +10,7 @@ module Kube3d {
   _module.config(['$routeProvider', "HawtioNavBuilderProvider", ($routeProvider: ng.route.IRouteProvider, builder: HawtioMainNav.BuilderFactory) => {
     tab = builder.create()
       .id(pluginName)
-      .title(() => '3D View')
+      .title(() => 'Angry Pods')
       .href(() => '/kubernetes/3d')
       .page(() => builder.join(templatePath, 'view.html'))
       .build();
@@ -18,7 +18,7 @@ module Kube3d {
 
   }]);
 
-  _module.run(['HawtioNav', (nav) => {
+  _module.run(['HawtioNav', 'preferencesRegistry', (nav, prefs) => {
     nav.on(HawtioMainNav.Actions.ADD, pluginName, (item) => {
       if (item.id !== 'kubernetes') {
         return;
@@ -27,6 +27,7 @@ module Kube3d {
         item.tabs.push(tab);
       }
     });
+    prefs.addTab('Angry Pods', UrlHelpers.join(templatePath, 'preferences.html'));
   }]);
 
 

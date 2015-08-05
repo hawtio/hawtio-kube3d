@@ -29,6 +29,8 @@ module Kube3d {
       return _.filter(_.keys(entities), (key) => _.startsWith('projectile-', key)).length;
     }
 
+    var sky: any = undefined;
+
     var el = $element.find('.kube3d-control')[0];
     var game = createGame({
         lightsDisabled: true,
@@ -45,7 +47,7 @@ module Kube3d {
         var player = $scope.player = new Player(game, avatar, target, $scope);
         entities[player.getName()] = player;
 
-        var sky = createSky({
+        sky = createSky({
           game: game,
           time: 800,
           speed: 0.1,
@@ -71,14 +73,6 @@ module Kube3d {
         var currentMaterial = 1;
 
         game.on('fire', function (origin, state) {
-          /*
-          if (!origin.getName) {
-            if (player.isDead()) {
-              player.respawn();
-              return;
-            }
-          }
-          */
           if (projectileCount() > maxProjectiles) {
             return;
           }
@@ -106,16 +100,18 @@ module Kube3d {
             Core.$apply($scope);
           }
 
-          if (currentTrack !== undefined && player.isDead()) {
-            currentTrack.stop();
-            currentTrack = undefined;
-          }
-          if (currentTrack === undefined && !player.isDead()) {
-            currentTrack = tracks[_.random(tracks.length - 1)];
-            currentTrack.on('end', () => {
+          if (settings.music) {
+            if (currentTrack !== undefined && player.isDead()) {
+              currentTrack.stop();
               currentTrack = undefined;
-            });
-            currentTrack.play();
+            }
+            if (currentTrack === undefined && !player.isDead()) {
+              currentTrack = tracks[_.random(tracks.length - 1)];
+              currentTrack.on('end', () => {
+                currentTrack = undefined;
+              });
+              currentTrack.play();
+            }
           }
 
           sky()(delta);
@@ -179,6 +175,9 @@ module Kube3d {
       if (game) {
         game.destroy();
         delete game;
+      }
+      if (sky) {
+        delete sky;
       }
       if (currentTrack) {
         currentTrack.stop();
