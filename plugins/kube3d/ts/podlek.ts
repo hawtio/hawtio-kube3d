@@ -216,8 +216,7 @@ module Kube3d {
       }
       this.log.debug("I'm dying!");
       if (playerHit && !this.dying) {
-        this.$scope.score = this.$scope.score + 1;
-        Core.$apply(this.$scope);
+        this.$scope.incrementScore();
       }
       this.dying = true;
       if (this.playerHit && !this.deleteCalled) {

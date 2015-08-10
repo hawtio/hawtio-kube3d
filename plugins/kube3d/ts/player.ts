@@ -90,7 +90,7 @@ module Kube3d {
         Core.$apply(this.$scope);
       }, 500);
       playerSpawn.play();
-      Core.$apply(this.$scope);
+      this.$scope.resetScore();
     }
 
     public hit() {

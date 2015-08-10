@@ -29,6 +29,19 @@ module Kube3d {
       return _.filter(_.keys(entities), (key) => _.startsWith('projectile-', key)).length;
     }
 
+    $scope.incrementScore = () => {
+      if ($scope.player && $scope.player.isDead()) {
+        return;
+      }
+      $scope.score = $scope.score + 1;
+      Core.$apply($scope);
+    }
+
+    $scope.resetScore = () => {
+      $scope.score = 0;
+      Core.$apply($scope);
+    }
+
     var sky: any = undefined;
 
     var el = $element.find('.kube3d-control')[0];
