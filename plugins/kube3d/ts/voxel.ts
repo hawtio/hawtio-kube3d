@@ -15,11 +15,15 @@ module Kube3d {
   // good for debugging
   // var generateChunk = flatTerrain();
 
-  export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', ($scope, $element, model:Kubernetes.KubernetesModelService) => {
+  export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', 'localStorage', ($scope, $element, model:Kubernetes.KubernetesModelService, localStorage) => {
 
     $scope.locked = true;
     $scope.playerDeaths = 0;
     $scope.score = 0;
+
+    var highScore = Core.parseIntValue(localStorage['kube3d.highScore']);
+    
+    $scope.highScore = highScore ? highScore : 0;
 
     var entities = {};
 
@@ -36,6 +40,16 @@ module Kube3d {
       $scope.score = $scope.score + 1;
       Core.$apply($scope);
     }
+
+    $scope.$watch('player.isDead()', (isDead) => {
+      if (!isDead) {
+        return;
+      } 
+      if ($scope.score > $scope.highScore) {
+        $scope.highScore = $scope.score;
+        localStorage['kube3d.highScore'] = $scope.highScore;
+      }
+    });
 
     $scope.resetScore = () => {
       $scope.score = 0;

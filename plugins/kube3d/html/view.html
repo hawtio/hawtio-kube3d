@@ -11,6 +11,8 @@
       <p class="death-title">You died!  Click to respawn...</p>
       <p class="death-info">Deaths: {{playerDeaths}}</p>
       <p class="death-info">Pods Destroyed: {{score}}</p>
+      <p class="death-info" ng-show="highScore != score">High Score: {{highScore}}</p>
+      <p class="death-info" ng-show="highScore == score">New high score!</p>
     </div>
   </div>
   <div class="kube3d-instructions-wrapper no-click" ng-show="locked">
