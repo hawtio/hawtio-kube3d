@@ -65,6 +65,12 @@
   color: white;
 }
 
+.title {
+  background-image: url('/resources/angry-pods-title.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+
 .kube3d-instructions-wrapper {
   opacity: 1.0;
   position: absolute;
