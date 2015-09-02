@@ -25,7 +25,7 @@
   color: white;
 }
 
-.overlay {
+.angry-pods-overlay {
   position: fixed !important;
   position: absolute;
   top: 70px;
@@ -35,18 +35,18 @@
   /*z-index: 300; */
 }
 
-.spawn {
+.angry-pods-spawn {
   pointer-events: none;
   background-color: white;
   opacity: 1.0;
   transition: 0.5s linear all;
 }
 
-.spawn.ng-hide {
+.angry-pods-spawn.ng-hide {
   opacity: 0.0;
 }
 
-.death {
+.angry-pods-death {
   background-color: #ff3333;
   opacity: 0.8;
 }
@@ -65,7 +65,7 @@
   color: white;
 }
 
-.title {
+.angry-pods-title {
   background-image: url('/resources/angry-pods-title.png');
   background-repeat: no-repeat;
   background-size: 100%;
