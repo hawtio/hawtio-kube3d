@@ -1,4 +1,5 @@
 /// <reference path="kube3dHelpers.d.ts" />
+/// <reference path="kube3dPlugin.d.ts" />
 declare module Kube3d {
     var playerLaser: any;
     var podlekLaser: any;

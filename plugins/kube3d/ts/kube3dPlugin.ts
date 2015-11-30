@@ -34,6 +34,18 @@ module Kube3d {
     prefs.addTab('Angry Pods', UrlHelpers.join(templatePath, 'preferences.html'));
   }]);
 
+  _module.directive('angryPodsTitle', () => {
+    return {
+      restrict: 'C',
+      link: (scope, element, attr) => {
+        element.css({
+          'background-image': "url('resources/angry-pods-title.png')",
+          'background-repeat': 'no-repeat',
+          'background-size': '100%'
+        });
+      }
+    }
+  });
 
   hawtioPluginLoader.addModule(pluginName);
 
