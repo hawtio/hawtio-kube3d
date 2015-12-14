@@ -26,8 +26,8 @@
     "hawtio-preferences": "~2.0.4"
   },
   "devDependencies": {
-    "bootstrap": "~3.3.1",
-    "patternfly": "~1.1.2",
+    "bootstrap": "~3.3.6",
+    "patternfly": "~2.7.0",
     "hawtio-core-dts": "~2.0.0"
   },
   "resolutions": {
