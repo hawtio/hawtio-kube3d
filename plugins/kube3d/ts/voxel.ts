@@ -17,6 +17,9 @@ module Kube3d {
 
   export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', 'localStorage', ($scope, $element, model:Kubernetes.KubernetesModelService, localStorage) => {
 
+    $scope.subTabConfig = [];
+    $scope.breadcrumbConfig = [];
+
     $scope.locked = true;
     $scope.playerDeaths = 0;
     $scope.score = 0;
