@@ -65,6 +65,7 @@ module Kube3d {
     var game = createGame({
         lightsDisabled: true,
         fogDisabled: false,
+        statsDisabled: true,
         generateChunks: false,
         texturePath: 'resources/textures/',
         materials: [['grass', 'dirt', 'grass_dirt'], 'dirt', 'brick', 'Building1', 'Building2', 'Sidewalk', 'Window'],
@@ -95,9 +96,34 @@ module Kube3d {
         */
 
         // toggle between first and third person modes
-        window.addEventListener('keydown', function (ev) {
+        var keyDown = (ev) => {
           if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle();
+        };
+        window.addEventListener('keydown', keyDown);
+
+        function cleanup() {
+          window.removeEventListener('keydown', keyDown);
+          $('#stats').remove();
+          if (game) {
+            game.destroy();
+            delete game;
+          }
+          if (sky) {
+            delete sky;
+          }
+          if (currentTrack) {
+            currentTrack.stop();
+          }
+        }
+
+        // just to be on the safe side :-)
+        $element.on('$destroy', () => {
+          $scope.$destroy();
+          setTimeout(() => {
+            cleanup();
+          }, 10);
         });
+
 
         // block interaction stuff, uses highlight data
         var currentMaterial = 1;
@@ -144,7 +170,9 @@ module Kube3d {
             }
           }
 
-          sky()(delta);
+          if (sky) {
+            sky()(delta);
+          }
 
           /*
           if (game.pendingChunks.length) {
@@ -200,23 +228,6 @@ module Kube3d {
       };
       game.showChunk(chunk);
     });
-
-    function cleanup() {
-      if (game) {
-        game.destroy();
-        delete game;
-      }
-      if (sky) {
-        delete sky;
-      }
-      if (currentTrack) {
-        currentTrack.stop();
-      }
-    }
-
-    // just to be on the safe side :-)
-    $element.on('$destroy', cleanup);
-    $scope.$on('$destroy', cleanup);
 
     function updatePods(e, model) {
       log.debug("model updated: ", model);
