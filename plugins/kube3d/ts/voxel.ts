@@ -1,3 +1,4 @@
+/// <reference path="kube3dHelpers.ts"/>
 /// <reference path="kube3dPlugin.ts"/>
 /// <reference path="podlek.ts"/>
 /// <reference path="energyBolt.ts"/>

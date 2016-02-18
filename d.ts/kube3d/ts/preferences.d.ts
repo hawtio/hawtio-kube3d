@@ -1,4 +1,4 @@
 /// <reference path="kube3dPlugin.d.ts" />
 declare module Kube3d {
-    var Preferences: any;
+    var Preferences: ng.IModule;
 }
