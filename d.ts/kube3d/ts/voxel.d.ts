@@ -4,5 +4,5 @@
 /// <reference path="player.d.ts" />
 /// <reference path="sounds.d.ts" />
 declare module Kube3d {
-    var VoxelController: ng.IModule;
+    var VoxelController: any;
 }
