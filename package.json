@@ -29,7 +29,8 @@
     "url-join": "0.0.1",
     "vinyl-source-stream": "^1.1.0",
     "which": "^1.0.8",
-    "wiredep": "^2.2.2"
+    "wiredep": "^2.2.2",
+    "yargs": "^4.2.0"
   },
   "dependencies": {
     "howler": "^1.1.26",

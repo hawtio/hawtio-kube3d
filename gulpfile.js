@@ -14,6 +14,7 @@ var gulp = require('gulp'),
     stringifyObject = require('stringify-object'),
     browserify = require('browserify'),
     source = require('vinyl-source-stream'),
+    argv = require('yargs').argv,
     tslintRules = require('./tslint.json');
 
 var plugins = gulpLoadPlugins({});
@@ -28,7 +29,7 @@ var config = {
   testTemplates: ['test-plugins/**/*.html'],
   templateModule: pkg.name + '-templates',
   testTemplateModule: pkg.name + '-test-templates',
-  dist: './dist/',
+  dist: argv.out || './dist/',
   js: pkg.name + '.js',
   testJs: pkg.name + '-test.js',
   css: pkg.name + '.css',
@@ -156,7 +157,7 @@ gulp.task('less', function () {
       paths: [ path.join(__dirname, 'less', 'includes') ]
     }))
     .pipe(plugins.concat(config.css))
-    .pipe(gulp.dest('./dist'));
+    .pipe(gulp.dest(config.dist));
 });
 
 gulp.task('template', ['tsc'], function() {
