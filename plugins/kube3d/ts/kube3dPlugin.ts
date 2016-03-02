@@ -34,6 +34,16 @@ module Kube3d {
     prefs.addTab('Angry Pods', UrlHelpers.join(templatePath, 'preferences.html'));
   }]);
 
+  _module.service('angryPodsBlacklist', ['localStorage', (localStorage) => {
+    var self = {
+      blacklist: settings.blacklist,
+      isBlacklisted(name:string) {
+        return _.some(self.blacklist, (item:any) => _.startsWith(name, item));
+      }
+    }
+    return self;
+  }]);
+
   _module.directive('angryPodsTitle', () => {
     return {
       restrict: 'C',

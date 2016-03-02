@@ -16,7 +16,7 @@ module Kube3d {
   // good for debugging
   // var generateChunk = flatTerrain();
 
-  export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', 'localStorage', ($scope, $element, model:Kubernetes.KubernetesModelService, localStorage) => {
+  export var VoxelController = controller('VoxelController', ['$scope', '$element', 'KubernetesModel', 'localStorage', 'angryPodsBlacklist', ($scope, $element, model:Kubernetes.KubernetesModelService, localStorage, angryPodsBlacklist) => {
 
     $scope.subTabConfig = [];
     $scope.breadcrumbConfig = [];
@@ -85,16 +85,6 @@ module Kube3d {
           speed: 0.1,
           color: new game.THREE.Color(game.skyColor)
         });
-
-        // highlight blocks when you look at them, hold <Ctrl> for block placement
-        /*
-        var blockPosPlace, blockPosErase;
-        var hl = game.highlighter = highlight(game, { color: 0xff0000 });
-        hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos });
-        hl.on('remove', function (voxelPos) { blockPosErase = null });
-        hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos });
-        hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null });
-        */
 
         // toggle between first and third person modes
         var keyDown = (ev) => {
@@ -175,26 +165,23 @@ module Kube3d {
             sky()(delta);
           }
 
-          /*
-          if (game.pendingChunks.length) {
-            log.debug("Pending chunks, skipping entity creation");
-            return;
-          }
-          */
-
           _.forIn(model.podsByKey, (pod, key) => {
             var creature:any = entities[key];
             if (!creature) {
+              if (angryPodsBlacklist.isBlacklisted(KubernetesAPI.getName(pod))) {
+                return;
+              }
+              log.debug("Creating creature: ", creature);
               creature = entities[key] = new Podlek(model, game, key, pod, $scope);
             }
           });
 
           // entities
           var entitiesToRemove = [];
+          var numEntities = _.filter(_.keys(entities), (key) => !_.startsWith('projectile-', key)).length;
           _.forIn(entities, (entity, key) => {
             if (entity.needsSpawning()) {
-              log.debug("need to create entity ", key);
-              entity.spawn(target);
+              entity.spawn(target, numEntities * 2, numEntities * 2);
             } else {
 
               if (entity.shouldDie()) {
@@ -233,8 +220,15 @@ module Kube3d {
     function updatePods(e, model) {
       log.debug("model updated: ", model);
       _.forIn(model.podsByKey, (pod, key) => {
+        if (!pod) {
+          return;
+        }
+        if (angryPodsBlacklist.isBlacklisted(KubernetesAPI.getName(pod))) {
+          return;
+        }
         var creature:any = entities[key];
         if (!creature) {
+          log.debug("Creating creature: ", pod);
           creature = entities[key] = new Podlek(model, game, key, pod, $scope);
         } else {
           creature.pod = pod;

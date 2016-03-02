@@ -41,7 +41,7 @@ declare module Kube3d {
         isDying(): boolean;
         hit(): void;
         die(playerHit?: boolean): void;
-        spawn(player: any): void;
+        spawn(player: any, maxx?: number, maxy?: number): void;
         turn(): void;
         needsSpawning(): boolean;
         name: string;

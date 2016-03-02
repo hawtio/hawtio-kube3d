@@ -16,6 +16,7 @@ declare module Kube3d {
     var settings: {
         destroyPods: boolean;
         music: boolean;
+        blacklist: any;
     };
     var HalfPI: number;
     var QuarterPI: number;

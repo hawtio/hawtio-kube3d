@@ -239,12 +239,12 @@ module Kube3d {
       playSound(podlekExplosion, this.player, this);
     }
 
-    public spawn(player) {
+    public spawn(player, maxx = 35, maxy = 35) {
       var game = this.game;
       var playerX = player.position.x;
       var playerZ = player.position.z;
-      var distX = Math.random() * 30 + 10;
-      var distZ = Math.random() * 30 + 10;
+      var distX = Math.random() * maxx + 5;
+      var distZ = Math.random() * maxy + 5;
       distX = maybe() ? distX : distX * -1;
       distZ = maybe() ? distZ : distZ * -1;
       var x = Math.round(playerX + distX);

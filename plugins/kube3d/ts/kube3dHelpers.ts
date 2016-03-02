@@ -16,9 +16,29 @@ module Kube3d {
   export var templatePath = 'plugins/kube3d/html';
   export var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
+  var defaultBlacklist = [
+    'fabric8',
+    'fluentd',
+    //'router',
+    'gogs',
+    'docker-registry',
+    //'jenkins',
+    //'nexus'
+  ];
+
+  function getBlacklistSettings() {
+    try {
+      return angular.fromJson(localStorage['Kube3d.blacklist']);
+    } catch (err) {
+      return defaultBlacklist;
+    }
+
+  }
+
   export var settings = {
     destroyPods: Core.parseBooleanValue(localStorage['Kube3d.destroyPods']),
-    music: localStorage['Kube3d.music'] === undefined ? true : Core.parseBooleanValue(localStorage['Kube3d.music'])
+    music: (localStorage['Kube3d.music'] === undefined) ? true : Core.parseBooleanValue(localStorage['Kube3d.music']),
+    blacklist: localStorage['Kube3d.blacklist'] ? getBlacklistSettings() : defaultBlacklist
   }
 
   export var HalfPI = Math.PI / 2;
