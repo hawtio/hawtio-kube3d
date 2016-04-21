@@ -17,7 +17,9 @@ module Kube3d {
       .build();
     builder.configureRouting($routeProvider, tab);
     // also add this to a couple other paths
-    ['/kubernetes', "/workspaces/:workspace/projects/:project"].forEach((context) => {
+    ["/kubernetes",
+     "/workspaces/:workspace",
+     "/workspaces/:workspace/projects/:project"].forEach((context) => {
       $routeProvider.when(UrlHelpers.join(context, '/namespace/:namespace/angryPods'), route('view.html', false));
     });
   }]);
